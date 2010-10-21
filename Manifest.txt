@@ -1,0 +1,11 @@
+CHANGELOG.rdoc
+Makefile
+Manifest.txt
+README.rdoc
+Rakefile
+VERSION.rdoc
+lib/VERSION.rdoc
+lib/weakhash.rb
+mkmf.log
+spec/weakhash_spec.rb
+weakhash.gemspec
