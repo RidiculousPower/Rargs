@@ -188,11 +188,10 @@
 	//	after that we only have to parse, not re-define                               
 	#define R_Define( parameter_set, ... )																	          rarg_parameter_set_t*	rarg_parameter_sets	=	RARG_define_ParameterSets( parameter_set,##__VA_ARGS__, NULL );
                                                                                     
-	#define R_Parse()																												          RARG_parse_ParameterSetsForMatch( & rarg_parse_descriptor, rarg_parameter_sets );
                                                                                     
-		/*--------------------*                                                         
-		*  RARG Descriptions  *                                                         
-		*--------------------*/                                                         
+		/*--------------------*
+		*  RARG Descriptions  *
+		*--------------------*/
                                                                                     
 	#define R_ListOrder( list_order_number )																          list_order_number
 	#define R_DescribeParameterSet(		parameter_set,												          \
@@ -212,20 +211,23 @@
 																		description, ... )										          RARG_define_PossibleMatch_description(	possible_match,																			\
 																																					          																				order_ranking_number,																\
 																																					          																				description,##__VA_ARGS__, NULL )
-                                                                                    
-                                                                                    
-                                                                                    
-                                                                                    
-                                                                                    
+
+		/*----------------------*
+		*  RARG Parameter Sets  *
+		*----------------------*/
+
 	#define R_ExactMatch( parameter_set, ... )															          RARG_define_ParameterSet_requireExactMatch( parameter_set,##__VA_ARGS__, NULL )
                                                                                     
-	                                                                                  
 	#define R_ParameterSet( parameter, ... )																          RARG_define_ParameterSet( parameter,##__VA_ARGS__, NULL )
 	#define R_Parameter( possible_match, ... )															          RARG_define_Parameter( possible_match,##__VA_ARGS__, NULL )
                                                                                     
 	#define R_OptionalParameter( possible_match, ... )											          RARG_define_Parameter_setOptional( R_Parameter( possible_match,##__VA_ARGS__, NULL ), NULL )
 	#define R_OptionalMatch( possible_match, ... )													          RARG_define_PossibleMatch_setOptional( possible_match,##__VA_ARGS__, NULL )
-                                                                                    
+
+		/*----------------------*
+		*  RARG Possible Types  *
+		*----------------------*/
+
 	#define R_Type( type, ... )																							          RARG_define_PossibleTypeMatch( type,##__VA_ARGS__, R_TERMINAL )
 	#define R_MatchType( type, receiver )																		          R_MatchPossibleType( R_Type( type ), receiver )
 	#define R_MatchPossibleType( possible_match, receiver )									          RARG_define_PossibleMatch_assignMatchToValue( possible_match, & receiver )
@@ -255,7 +257,17 @@
 	#define R_BlockProcWithArity( arity, ... )															          RI_Arity( R_BlockProc(),##__VA_ARGS__, R_TERMINATE_ARITY )
 	#define R_BlockLambdaWithArity( arity, ... )														          RI_Arity( R_BlockLambda(),##__VA_ARGS__, R_TERMINATE_ARITY )
 	#define R_Method()																											          R_AncestorInstance( rb_cMethod )
-                                                                                    
+
+	#define R_RespondsTo( method, ... )																								RARG_define_PossibleMethodResponds( method,##__VA_ARGS__, NULL )
+	#define R_Returns( method, rb_return_value, ... )																	RARG_define_PossibleMethodReturns( method, rb_return_value,##__VA_ARGS__, Qnil )
+	#define R_ReturnsWithArgs( method, argc, args, rb_return_value, ... )							RARG_define_PossibleMethodReturnsWithArgs( method, argc, args, rb_return_value,##__VA_ARGS__, Qnil )
+	#define R_ReturnsNonNil( method, ... )																						RARG_define_PossibleMethodReturnsNonNil( method,##__VA_ARGS__, NULL )
+	#define R_ReturnsNonNilWithArgs( method, argc, args, ... )												RARG_define_PossibleMethodReturnsNonNilWithArgs( method, argc, args )
+
+		/*------------------------*
+		*  RARG Possible Matches  *
+		*------------------------*/
+
 	#define R_MatchAny( receiver )																					          R_MatchPossibleType( R_Any(), receiver )
 	#define R_MatchNotNil( receiver )																				          R_MatchPossibleType( R_NotNil(), receiver )
 	#define R_MatchString( receiver )																				          R_MatchPossibleType( R_String(), receiver )
@@ -298,11 +310,11 @@
 	#define R_ElseIfMatch( if_possible_match, then_possible_match )					          RARG_define_PossibleElseIfMatchMatch( if_possible_match, then_possible_match )
 	#define R_Else( possible_match )																				          RARG_define_PossibleElseMatch( possible_match )
 	
-	#define R_RespondsTo( method, ... )																								RARG_define_PossibleMethodResponds( method,##__VA_ARGS__, NULL )
-	#define R_Returns( method, rb_return_value, ... )																	RARG_define_PossibleMethodReturns( method, rb_return_value,##__VA_ARGS__, Qnil )
-	#define R_ReturnsWithArgs( method, argc, args, rb_return_value, ... )							RARG_define_PossibleMethodReturnsWithArgs( method, argc, args, rb_return_value,##__VA_ARGS__, Qnil )
-	#define R_ReturnsNonNil( method, ... )																						RARG_define_PossibleMethodReturnsNonNil( method,##__VA_ARGS__, NULL )
-	#define R_ReturnsNonNilWithArgs( method, argc, args, ... )												RARG_define_PossibleMethodReturnsNonNilWithArgs( method, argc, args )
+		/*---------------*
+		*  RARG Parsing  *
+		*---------------*/
+
+	#define R_Parse()																												          RARG_parse_ParameterSetsForMatch( & rarg_parse_descriptor, rarg_parameter_sets );
 
 	#define R_ArgsRemaining()																													( rarg_parse_descriptor.argc - rarg_parse_descriptor.args_parsed )
 	#define R_RemainingArgs()																													( rarg_parse_descriptor.args + rarg_parse_descriptor.args_parsed )

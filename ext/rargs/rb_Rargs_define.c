@@ -180,7 +180,9 @@ rarg_possible_match_t* RARG_define_PossibleAncestorMatch( char* c_class_name, ..
 			}
 			*this_possible_ancestor_match	=	RI_AllocPossibleAncestorMatch();
 			
-			VALUE	rb_class_instance	=	rb_const_get(	rb_cBasicObject, rb_intern( c_class_name ) );
+			ID	constant_id	=	rb_intern( c_class_name );
+			
+			VALUE	rb_class_instance	=	rb_const_get(	rb_cObject, constant_id );
 
 			( *this_possible_ancestor_match )->ancestor = rb_class_instance;
 
@@ -681,7 +683,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilWithArgs(	char*		m
 	}
 
 	/******************************************
-	*  RARG_define_PossibleMatch_setOptional  *
+	*  RARG_define_Parameter_setOptional  *
 	******************************************/
 
 	rarg_parameter_t* RARG_define_Parameter_setOptional( rarg_parameter_t*	parameter, ... )	{

@@ -62,6 +62,13 @@ test/CMakeFiles/rargs_test.dir/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rb_R
 test/CMakeFiles/rargs_test.dir/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rb_Rargs_parse.c.o: /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rb_Rargs_parse.h
 test/CMakeFiles/rargs_test.dir/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rb_Rargs_parse.c.o: /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rb_Rargs_types.h
 
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby.h
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/defines.h
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/intern.h
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/missing.h
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/ruby.h
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/st.h
+test/CMakeFiles/rargs_test.dir/main_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/x86_64-darwin10.4.0/ruby/config.h
 test/CMakeFiles/rargs_test.dir/main_spec.c.o: ../test/main_spec.c
 test/CMakeFiles/rargs_test.dir/main_spec.c.o: /usr/local/include/cspec.h
 test/CMakeFiles/rargs_test.dir/main_spec.c.o: /usr/local/include/cspec/cspec.h
