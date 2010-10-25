@@ -173,8 +173,7 @@
 	*  RARG Public Macros  *
 	***********************/
 
-	#define R_DefineAndParse( argc, args, rb_self, parameter_set, ... )			          R_Init( argc, args, rb_self );							\
-																																					          R_Define( parameter_set,##__VA_ARGS__ );		\
+	#define R_DefineAndParse( argc, args, rb_self, parameter_set, ... )			          R_Define( argc, args, rb_self, parameter_set,##__VA_ARGS__ );		\
 																																					          R_Parse();
                                                                                 
 	//	copy init info to pass internally - we leave the originally argc/args alone
@@ -186,7 +185,8 @@
                                                                                     
 	//	we define rarg_parameter_sets as static so that the first time the method runs its arg definition structs are defined
 	//	after that we only have to parse, not re-define                               
-	#define R_Define( parameter_set, ... )																	          rarg_parameter_set_t*	rarg_parameter_sets	=	RARG_define_ParameterSets( parameter_set,##__VA_ARGS__, NULL );
+	#define R_Define( argc, args, rb_self, parameter_set, ... )												R_Init( passed_argc, passed_args, passed_rb_self );								\
+																																										rarg_parameter_set_t*	rarg_parameter_sets	=	RARG_define_ParameterSets( parameter_set,##__VA_ARGS__, NULL );
                                                                                     
                                                                                     
 		/*--------------------*
@@ -233,7 +233,7 @@
 	#define R_MatchPossibleType( possible_match, receiver )									          RARG_define_PossibleMatch_assignMatchToValue( possible_match, & receiver )
 	#define R_MatchPossibleTypeForHash( possible_match, receiver )					          RARG_define_PossibleMatch_assignHashForKeyDataMatchToValue( possible_match, & receiver )
                                                                                     
-	#define R_Any()																													          R_Type( R_ANY )
+	#define R_Any()																																		R_Type( R_ANY )
 	#define R_NotNil()																											          R_Type( R_NOT_NIL )
 	#define R_String()																											          R_Type( R_STRING )
 	#define R_Symbol()																											          R_Type( R_SYMBOL )
@@ -243,26 +243,28 @@
 	#define R_Hash( hash_key, hash_data )																		          RARG_define_PossibleHashMatch( hash_key, hash_data )
 	#define R_Key( possible_match, ... )																		          RARG_define_PossibleHashMatch_KeyOrDataMatch( possible_match,##__VA_ARGS__, NULL )
 	#define R_Data( possible_match, ... )																		          RARG_define_PossibleHashMatch_KeyOrDataMatch( possible_match,##__VA_ARGS__, NULL )
-	#define R_Index( index_string, ... )																		          RARG_define_PossibleHashMatch_index( index_string,##__VA_ARGS__, NULL )
+	#define R_Index( index_string, ... )																		          RARG_define_PossibleHashMatch_indexesMatch( index_string,##__VA_ARGS__, NULL )
+	#define R_IndexMatch( index_string, possible_match, ... )									        RARG_define_PossibleHashMatch_indexesMatch_dataMatch( R_Index( index_string ), possible_match,##__VA_ARGS__, NULL )
 	#define R_Ancestor( class_name, ... )																		          RARG_define_PossibleAncestorMatch( class_name,##__VA_ARGS__, NULL )
 	#define R_AncestorInstance( class_or_module_instance, ... )							          RARG_define_PossibleAncestorInstanceMatch( class_or_module_instance,##__VA_ARGS__, R_TERMINAL )
 	#define R_Class( class_or_module_name, ... )														          R_Ancestor( class_or_module_name,##__VA_ARGS__ )
 	#define R_ClassInstance( class_or_module_instance, ... )								          R_AncestorInstance( class_or_module_instance,##__VA_ARGS__ )
 	#define R_Proc()																												          R_AncestorInstance( rb_cProc )
 	#define R_Lambda()																											          R_Proc()
-	#define R_ProcWithArity( arity, ... )																		          RI_Arity( R_Proc(),##__VA_ARGS__, R_TERMINATE_ARITY )
-	#define R_LambdaWithArity( arity, ... )																	          RI_Arity( R_Lambda(),##__VA_ARGS__, R_TERMINATE_ARITY )
+	#define R_ProcWithArity( arity, ... )																		          RI_Arity( R_Proc(), arity,##__VA_ARGS__, R_TERMINATE_ARITY )
+	#define R_LambdaWithArity( arity, ... )																	          RI_Arity( R_Lambda(), arity,##__VA_ARGS__, R_TERMINATE_ARITY )
 	#define R_BlockProc()																										          RARG_define_Block_procMatch()
 	#define R_BlockLambda()																									          RARG_define_Block_lambdaMatch()
-	#define R_BlockProcWithArity( arity, ... )															          RI_Arity( R_BlockProc(),##__VA_ARGS__, R_TERMINATE_ARITY )
-	#define R_BlockLambdaWithArity( arity, ... )														          RI_Arity( R_BlockLambda(),##__VA_ARGS__, R_TERMINATE_ARITY )
+	#define R_BlockProcWithArity( arity, ... )															          RI_Arity( R_BlockProc(), arity, ##__VA_ARGS__, R_TERMINATE_ARITY )
+	#define R_BlockLambdaWithArity( arity, ... )														          RI_Arity( R_BlockLambda(), arity, ##__VA_ARGS__, R_TERMINATE_ARITY )
 	#define R_Method()																											          R_AncestorInstance( rb_cMethod )
+	#define R_Group( possible_match, ... )																						RARG_define_PossibleGroupMatch( possible_match,##__VA_ARGS__, NULL )
 
 	#define R_RespondsTo( method, ... )																								RARG_define_PossibleMethodResponds( method,##__VA_ARGS__, NULL )
 	#define R_Returns( method, rb_return_value, ... )																	RARG_define_PossibleMethodReturns( method, rb_return_value,##__VA_ARGS__, Qnil )
 	#define R_ReturnsWithArgs( method, argc, args, rb_return_value, ... )							RARG_define_PossibleMethodReturnsWithArgs( method, argc, args, rb_return_value,##__VA_ARGS__, Qnil )
-	#define R_ReturnsNonNil( method, ... )																						RARG_define_PossibleMethodReturnsNonNil( method,##__VA_ARGS__, NULL )
-	#define R_ReturnsNonNilWithArgs( method, argc, args, ... )												RARG_define_PossibleMethodReturnsNonNilWithArgs( method, argc, args )
+	#define R_ReturnsNonNil( method, ... )																						RARG_define_PossibleMethodsReturnNonNil( method,##__VA_ARGS__, NULL )
+	#define R_ReturnsNonNilWithArgs( method, argc, args )															RARG_define_PossibleMethodReturnsNonNilWithArgs( method, argc, args )
 
 		/*------------------------*
 		*  RARG Possible Matches  *
@@ -278,6 +280,7 @@
 	#define R_MatchKey( possible_match, receiver )													          R_MatchPossibleType( possible_match, receiver )
 	#define R_MatchData( possible_match, receiver )													          R_MatchPossibleType( possible_match, receiver )
 	#define R_MatchIndex( index_string, receiver )													          R_MatchPossibleType( R_Index( index_string ), receiver )
+	#define R_MatchIndexMatch( index_string, possible_match, receiver )								R_MatchPossibleType( R_IndexMatch( index_string, possible_match ), receiver )
 	#define R_MatchProc( receiver )																					          R_MatchPossibleType( R_Proc(), receiver )
 	#define R_MatchLambda( receiver )																				          R_MatchProc( receiver )
 	#define R_MatchProcWithArity( receiver, arity, ... )										          RI_Arity( R_MatchProc( receiver ),##__VA_ARGS__, R_TERMINATE_ARITY )
@@ -289,7 +292,8 @@
 	#define R_MatchMethodInstance( receiver )																          R_MatchPossibleType( R_Method(), receiver )
 	#define R_MatchAncestor( class_or_module_name, receiver )								          R_MatchPossibleType( R_Ancestor( class_or_module_name ), receiver )
 	#define R_MatchAncestorInstance( class_or_module_instance, receiver )		          R_MatchPossibleType( R_AncestorInstance( class_or_module_instance ), receiver )
-                                                                                    
+	#define R_MatchGroup( receiver, possible_match, ... )															R_MatchPossibleType( R_Group( possible_match,##_VA_ARGS__ ), receiver )
+
 	#define R_MatchAnyForHash( receiver )																		          R_MatchPossibleTypeForHash( R_Any(), receiver )     
 	#define R_MatchNotNilForHash( receiver )																          R_MatchPossibleTypeForHash( R_NotNil(), receiver )
 	#define R_MatchStringForHash( receiver )																          R_MatchPossibleTypeForHash( R_String(), receiver )
@@ -298,9 +302,9 @@
 	#define R_MatchArrayForHash( receiver )																	          R_MatchPossibleTypeForHash( R_Array(), receiver )
 	#define R_MatchHashForHash( key, data, receiver )												          R_MatchPossibleTypeForHash( R_Hash( key, data ), receiver )
 	#define R_MatchIndexForHash( receiver )																	          R_MatchPossibleTypeForHash( R_StringSymbol(), receiver )
-	#define R_MatchProcForHash( receiver )																	          R_MatchPossibleTypeForHash( R_Proc(), receiver )
-                                                                                    
-	#define R_MatchGroup( possible_match, ... )															          RARG_define_PossibleGroupMatch( possible_match,##__VA_ARGS__, NULL )
+	#define R_MatchProcForHash( receiver )																	          R_MatchPossibleTypeForHash( R_Proc(), receiver )                                                                                    
+	#define R_MatchGroupForHash( receiver, possible_match, ... )											R_MatchPossibleTypeForHash( R_Group( possible_match,##_VA_ARGS__ ), receiver )
+
 	#define R_IfElse( possible_if_else_match, ... )													          RARG_define_PossibleIfElseMatch( possible_if_else_match,##__VA_ARGS__, NULL )
 	#define R_IfValue( rb_variable, possible_match )												          RARG_define_PossibleIfValueMatch( & rb_variable, Qnil, possible_match )
 	#define R_IfValueEquals( rb_variable, rb_value, possible_match )				          RARG_define_PossibleIfValueMatch( & rb_variable, rb_value, possible_match )

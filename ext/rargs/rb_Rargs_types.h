@@ -137,7 +137,7 @@
 	typedef enum rarg_possible_condition_match_type_e	rarg_possible_condition_match_type_t;
 	typedef struct rarg_possible_if_else_match_s	rarg_possible_if_else_match_t;
 	typedef union rarg_possible_if_else_match_type_u	rarg_possible_if_else_match_type_t;
-	typedef struct rarg_possible_condition_if_else_value_match_s	rarg_possible_condition_if_else_value_match_t;
+	typedef struct rarg_possible_if_else_value_match_s	rarg_possible_if_else_value_match_t;
 	typedef struct rarg_possible_if_else_match_match_s	rarg_possible_if_else_match_match_t;
 
 	//------------------------------------------------------------------------------//
@@ -175,7 +175,6 @@
 
 		VALUE																	rb_self;
 
-		int																		matched_parameter_set_index;
 		rarg_matched_parameter_set_t*					matched_parameter_set;
 		rarg_matched_parameter_t**						matched_parameter_ptr;
 		
@@ -352,12 +351,12 @@
 
 	union rarg_possible_if_else_match_type_u	{
 
-		rarg_possible_condition_if_else_value_match_t*	value;
+		rarg_possible_if_else_value_match_t*	value;
 		rarg_possible_if_else_match_match_t*						match;
 	};
 
 	//	if variable is set to value, attempt to match action
-	struct rarg_possible_condition_if_else_value_match_s	{
+	struct rarg_possible_if_else_value_match_s	{
 	
 		VALUE*																				variable;
 		VALUE																					value;

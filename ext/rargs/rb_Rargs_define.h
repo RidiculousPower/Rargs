@@ -16,7 +16,9 @@
 	rarg_possible_match_t* RARG_define_PossibleHashMatch(	rarg_possible_hash_key_data_match_t*	possible_key_match, 
 																												rarg_possible_hash_key_data_match_t*	possible_data_match );
 		rarg_possible_hash_key_data_match_t* RARG_define_PossibleHashMatch_KeyOrDataMatch( rarg_possible_match_t* possible_match, ... );
-		rarg_possible_hash_index_match_t* RARG_define_PossibleHashMatch_indexesMatch(	char*	c_index, ... );
+	rarg_possible_match_t* RARG_define_PossibleHashMatch_indexesMatch(	char*	c_index, ... );
+	rarg_possible_match_t* RARG_define_PossibleHashMatch_indexesMatch_dataMatch(	rarg_possible_match_t*		possible_hash_index_match, 
+																																								rarg_possible_match_t*		possible_data_match, ... );
 	rarg_possible_match_t* RARG_define_Block_procMatch();
 	rarg_possible_match_t* RARG_define_Block_lambdaMatch();
 
@@ -40,7 +42,7 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 																																		VALUE*									args,
 																																		VALUE										possible_method_return, ... );
 	rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNil(	char* method_name, ... );
-	rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilWithArgs(	char*		method_name,
+	rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		method_name,
 																																					int			argc,
 																																					VALUE*	args );
 
@@ -88,7 +90,7 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 	#define RI_AllocPossibleTypeMatch()																					calloc( 1, sizeof( rarg_possible_type_match_t ) )
 	#define RI_AllocPossibleAncestorMatch()																			calloc( 1, sizeof( rarg_possible_ancestor_matches_t ) )
 	#define RI_AllocPossibleIfElseMatch()																				calloc( 1, sizeof( rarg_possible_if_else_match_t ) )
-	#define RI_AllocPossibleIfElseValueMatch()																	calloc( 1, sizeof( rarg_possible_condition_if_else_value_match_t ) )
+	#define RI_AllocPossibleIfElseValueMatch()																	calloc( 1, sizeof( rarg_possible_if_else_value_match_t ) )
 	#define RI_AllocPossibleIfElseMatchMatch()																	calloc( 1, sizeof( rarg_possible_if_else_match_match_t ) )
 	#define RI_AllocPossibleIfElsePossibleMatch()																calloc( 1, sizeof( rarg_possible_if_else_match_type_t ) )
 	#define RI_AllocPossibleMethodMatch()																				calloc( 1, sizeof( rarg_possible_method_match_t ) )

@@ -225,34 +225,6 @@ rarg_possible_match_t* RARG_define_PossibleAncestorInstanceMatch( VALUE rb_class
 	return possible_ancestors_match;
 }
 
-/************************************
-*  RARG_define_PossibleMethodMatch  *
-************************************/
-
-rarg_possible_match_t* RARG_define_PossibleMethodMatch( char* c_method, ... )	{
-
-	rarg_possible_match_t*										possible_method_match		= NULL;	
-	rarg_possible_method_match_t**						this_method_match				=	& possible_method_match->possible->methods;
-
-	va_list	var_args;
-	va_start( var_args, c_method );
-
-		while( c_method != NULL )	{
-			
-			if ( *this_method_match )	{
-				this_method_match		=	& ( *this_method_match )->next;
-				*this_method_match	=	RI_AllocPossibleMethodMatch();				
-			}
-			( *this_method_match )->method = rb_intern( c_method );
-
-			c_method = va_arg( var_args, char* );
-		}
-		
-	va_end( var_args );
-
-	return possible_method_match;
-}
-
 /**********************************
 *  RARG_define_PossibleHashMatch  *
 **********************************/
@@ -309,8 +281,13 @@ rarg_possible_match_t* RARG_define_PossibleHashMatch(	rarg_possible_hash_key_dat
 	*  RARG_define_PossibleHashMatch_indexesMatch  *
 	***********************************************/
 
-	rarg_possible_hash_index_match_t* RARG_define_PossibleHashMatch_indexesMatch(	char*	c_index, ... )	{
+	rarg_possible_match_t* RARG_define_PossibleHashMatch_indexesMatch(	char*	c_index, ... )	{
 		
+		rarg_possible_match_t*							possible_index_match		= NULL;	
+		RI_CreatePossibleMatch( possible_index_match );
+		RI_AssignPossibleMatchType( possible_index_match, RARG_INDEX );
+		possible_index_match->possible->hash	=	RI_AllocPossibleHashMatch();
+
 		rarg_possible_hash_index_match_t*		possible_hash_indexes		=	NULL;
 		rarg_possible_hash_index_match_t**	this_index_match				=	& possible_hash_indexes;
 
@@ -320,7 +297,8 @@ rarg_possible_match_t* RARG_define_PossibleHashMatch(	rarg_possible_hash_key_dat
 			while( c_index != NULL )	{
 				
 				//	use instance function to define
-				if ( ( *this_index_match )->index_name != NULL )	{
+				if (		*this_index_match != NULL
+						&&	( *this_index_match )->index_name != NULL )	{
 					this_index_match	=	& ( *this_index_match )->next;
 				}
 				*this_index_match	=	calloc( 1, sizeof( rarg_possible_hash_index_match_t ) );
@@ -331,7 +309,35 @@ rarg_possible_match_t* RARG_define_PossibleHashMatch(	rarg_possible_hash_key_dat
 			
 		va_end( var_args );
 		
-		return possible_hash_indexes;
+		possible_index_match->possible->hash->possible_index_match	=	possible_hash_indexes;
+		return possible_index_match;
+	}
+
+	/***********************************************
+	*  RARG_define_PossibleHashMatch_indexesMatch  *
+	***********************************************/
+
+	rarg_possible_match_t* RARG_define_PossibleHashMatch_indexesMatch_dataMatch(	rarg_possible_match_t*				possible_hash_index_match, 
+																																								rarg_possible_match_t*				possible_data_match, ... )	{
+	
+		rarg_possible_match_t**	this_possible_data	=	& possible_hash_index_match->possible->hash->possible_index_match->possible_index_data_match;
+	
+		va_list	var_args;
+		va_start( var_args, possible_data_match );
+
+			while( possible_data_match != NULL )	{
+				
+				while ( *this_possible_data != NULL )	{
+					this_possible_data	=	& ( *this_possible_data )->next;
+				}
+				*this_possible_data	=	possible_data_match;
+				
+				possible_data_match = va_arg( var_args, rarg_possible_match_t* );
+			}
+			
+		va_end( var_args );
+	
+		return possible_hash_index_match;
 	}
 	
 /********************************
@@ -370,7 +376,7 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 
 	rarg_possible_match_t*			possible_match		= NULL;	
 	RI_CreatePossibleMatch( possible_match );
-	RI_AssignPossibleMatchType( possible_match, RARG_CONDITION_IF_MATCH );
+	RI_AssignPossibleMatchType( possible_match, RARG_IF_ELSE );
 	rarg_possible_if_else_match_t**	this_possible_if_else_match			=	& possible_match->possible->if_else;
 
 	va_list	var_args;
@@ -402,6 +408,8 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 		rarg_possible_if_else_match_t*	possible_if_else_match	=	RI_AllocPossibleIfElseMatch();
 		
 		possible_if_else_match->type	=	RARG_CONDITION_IF_MATCH;
+		possible_if_else_match->possible	=	RI_AllocPossibleIfElseMatch();
+		possible_if_else_match->possible->match	=	RI_AllocPossibleIfElsePossibleMatch();
 		possible_if_else_match->possible->match->condition		=	possible_match_condition;
 		possible_if_else_match->possible->match->action				=	possible_match_action;
 		
@@ -441,11 +449,8 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 		rarg_possible_if_else_match_t*	possible_if_else_match	=	RI_AllocPossibleIfElseMatch();
 		
 		possible_if_else_match->type	=	RARG_CONDITION_ELSE_IF_MATCH;
-
 		possible_if_else_match->possible											=	RI_AllocPossibleIfElsePossibleMatch();
-
 		possible_if_else_match->possible->match								=	RI_AllocPossibleIfElseMatchMatch();
-
 		possible_if_else_match->possible->match->condition		=	possible_match_condition;
 		possible_if_else_match->possible->match->action				=	possible_match_action;
 		
@@ -463,6 +468,8 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 		rarg_possible_if_else_match_t*	possible_if_else_match	=	RI_AllocPossibleIfElseMatch();
 		
 		possible_if_else_match->type	=	RARG_CONDITION_ELSE_IF_VALUE;
+		possible_if_else_match->possible	=	RI_AllocPossibleIfElseMatch();
+		possible_if_else_match->possible->value	=	RI_AllocPossibleIfElseValueMatch();
 		possible_if_else_match->possible->value->variable		=	possible_match_variable;
 		possible_if_else_match->possible->value->value			=	possible_match_value;
 		possible_if_else_match->possible->value->action			=	possible_match_action;
@@ -479,7 +486,7 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 		rarg_possible_if_else_match_t*	possible_if_else_match	=	RI_AllocPossibleIfElseMatch();
 		
 		possible_if_else_match->type	=	RARG_CONDITION_ELSE_MATCH;
-		possible_if_else_match->possible											=	RI_AllocPossibleIfElsePossibleMatch();
+		possible_if_else_match->possible											=	RI_AllocPossibleIfElseMatch();
 		possible_if_else_match->possible->match								=	RI_AllocPossibleIfElseMatchMatch();
 		possible_if_else_match->possible->match->action				=	possible_match_action;
 		
@@ -619,6 +626,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNil(	char* method_nam
 			*this_possible_method_match	=	RI_AllocPossibleMethodMatch();			
 
 			( *this_possible_method_match )->method = rb_intern( method_name );
+			( *this_possible_method_match )->ensure_return_non_nil = TRUE;
 
 			method_name = va_arg( var_args, char* );
 		}
@@ -632,7 +640,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNil(	char* method_nam
 *  RARG_define_PossibleMethodReturnsNonNil  *
 **********************************************/
 	
-rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilWithArgs(	char*		method_name,
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		method_name,
 																																				int			argc,
 																																				VALUE*	args )	{
 
@@ -645,6 +653,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilWithArgs(	char*		m
 	possible_method_return_match->possible->methods->method = rb_intern( method_name );
 	possible_method_return_match->possible->methods->argc = argc;
 	possible_method_return_match->possible->methods->args = args;
+	possible_method_return_match->possible->methods->ensure_return_non_nil = TRUE;
 
 	return possible_method_return_match;	
 }
@@ -709,6 +718,8 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilWithArgs(	char*		m
 
 	rarg_possible_match_t* RARG_define_PossibleMatch_setOptional( rarg_possible_match_t*	possible_match, ... )	{
 
+		rarg_possible_match_t*	root_possible_match	=	possible_match;
+
 		va_list	var_args;
 		va_start( var_args, possible_match );
 
@@ -719,7 +730,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilWithArgs(	char*		m
 			
 		va_end( var_args );
 		
-		return possible_match;
+		return root_possible_match;
 	}
 
 	/*****************************************
@@ -831,7 +842,10 @@ rarg_parameter_t* RARG_define_Parameter_description(	rarg_parameter_t*		paramete
 
 		while ( description != NULL )	{
 			
-			if ( *( *this_description )->description != '\0' )	{
+			if ( *this_description == NULL )	{
+				*this_description = calloc( 1, sizeof( rarg_description_t ) );
+			}
+			else if ( *( *this_description )->description != '\0' )	{
 				( *this_description )->next		= calloc( 1, sizeof( rarg_description_t ) );
 				this_description													=	& ( *this_description )->next;
 			}
@@ -861,7 +875,10 @@ rarg_possible_match_t* RARG_define_PossibleMatch_description(	rarg_possible_matc
 
 		while ( description != NULL )	{
 			
-			if ( *( *this_description )->description != '\0' )	{
+			if ( *this_description == NULL )	{
+				*this_description = calloc( 1, sizeof( rarg_description_t ) );
+			}
+			else if ( *( *this_description )->description != '\0' )	{
 				( *this_description )->next		= calloc( 1, sizeof( rarg_description_t ) );
 				this_description													=	& ( *this_description )->next;
 			}
