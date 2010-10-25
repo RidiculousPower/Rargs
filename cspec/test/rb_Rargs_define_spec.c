@@ -385,7 +385,7 @@ END_DESCRIBE
 DESCRIBE( R_MatchType, "R_MatchType( type, receiver )" )
 	IT( "matches given parameter to the specified receiver" )
 		VALUE	rb_receiver	=	Qnil;
-		rarg_possible_match_t* possible_match	=	R_MatchType( R_STRING, rb_receiver );
+		rarg_possible_match_t* possible_match	=	R_MatchType( rb_receiver, R_STRING );
 		SHOULD_NOT_BE_NULL( possible_match );
 		SHOULD_EQUAL( possible_match->type, RARG_TYPE );
 		SHOULD_EQUAL( possible_match->receiver, & rb_receiver );
@@ -399,7 +399,7 @@ END_DESCRIBE
 DESCRIBE( R_MatchIndex, "R_MatchIndex( index_string, receiver )" )
 	IT( "matches data corresponding to index in parameter to the specified receiver" )
 		VALUE	rb_receiver	=	Qnil;
-		rarg_possible_match_t* possible_index_match	=	R_MatchIndex( "index", rb_receiver );
+		rarg_possible_match_t* possible_index_match	=	R_MatchIndex( rb_receiver, "index" );
 		SHOULD_NOT_BE_NULL( possible_index_match );
 		SHOULD_EQUAL( strcmp( possible_index_match->possible->hash->possible_index_match->index_name, "index" ), 0 );
 		SHOULD_EQUAL( possible_index_match->receiver, & rb_receiver );
@@ -416,7 +416,7 @@ DESCRIBE( R_MatchIndexMatch, "R_MatchIndexMatch( index_string, possible_match, r
 	IT( "attempts to match data corresponding to index in parameter and assign to the specified receiver" )
 		VALUE	rb_receiver	=	Qnil;
 		rarg_possible_match_t*	possible_string_match	=	R_String();
-		rarg_possible_match_t*	possible_index_match	=	R_MatchIndexMatch( "index", possible_string_match, rb_receiver );
+		rarg_possible_match_t*	possible_index_match	=	R_MatchIndexMatch( rb_receiver, "index", possible_string_match );
 		SHOULD_NOT_BE_NULL( possible_index_match );
 		SHOULD_EQUAL( strcmp( possible_index_match->possible->hash->possible_index_match->index_name, "index" ), 0 );
 		SHOULD_EQUAL( possible_index_match->receiver, & rb_receiver );
@@ -432,7 +432,7 @@ DESCRIBE( R_MatchPossibleTypeForHash, "R_MatchPossibleTypeForHash( receiver )" )
 	IT( "attempts a possible match for a hash key or data and if match occurs, assigns parent hash to the specified receiver" )
 		VALUE	rb_receiver	=	Qnil;
 		rarg_possible_match_t*	possible_string_match	=	R_String();
-		rarg_possible_hash_key_data_match_t* possible_hash_key_data_match	=	R_MatchPossibleTypeForHash( R_Key( possible_string_match ), rb_receiver );
+		rarg_possible_hash_key_data_match_t* possible_hash_key_data_match	=	R_MatchPossibleTypeForHash( rb_receiver, R_Key( possible_string_match ) );
 		SHOULD_NOT_BE_NULL( possible_hash_key_data_match );
 		SHOULD_EQUAL( possible_hash_key_data_match->possible_match->receiver, & rb_receiver );
 		SHOULD_BE_TRUE( possible_hash_key_data_match->assign_parent_hash_for_match );

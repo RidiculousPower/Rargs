@@ -1,7 +1,7 @@
 The system is: Darwin - 10.4.0 - i386
 Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
 Compiler: /usr/bin/clang 
-Build flags: -march=x86-64;-g-dwarf2;-fno-common;-fsigned-char;-pipe;-Wall;-Wextra;-fcatch-undefined-behavior
+Build flags: -march=x86-64;-g;-fno-common;-fsigned-char;-pipe;-Wall;-Wextra;-fcatch-undefined-behavior
 Id flags: 
 
 The output was:
@@ -21,10 +21,10 @@ Run Build Command:/usr/bin/make "cmTryCompileExec/fast"
 /usr/bin/make -f CMakeFiles/cmTryCompileExec.dir/build.make CMakeFiles/cmTryCompileExec.dir/build
 "/Applications/CMake 2.8-2.app/Contents/bin/cmake" -E cmake_progress_report /Users/asher/Projects/rp/ruby/rargs/cspec/run/CMakeFiles/CMakeTmp/CMakeFiles 1
 Building C object CMakeFiles/cmTryCompileExec.dir/testCCompiler.c.o
-/usr/bin/clang   -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior      -o CMakeFiles/cmTryCompileExec.dir/testCCompiler.c.o   -c /Users/asher/Projects/rp/ruby/rargs/cspec/run/CMakeFiles/CMakeTmp/testCCompiler.c
+/usr/bin/clang   -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior      -o CMakeFiles/cmTryCompileExec.dir/testCCompiler.c.o   -c /Users/asher/Projects/rp/ruby/rargs/cspec/run/CMakeFiles/CMakeTmp/testCCompiler.c
 Linking C executable cmTryCompileExec
 "/Applications/CMake 2.8-2.app/Contents/bin/cmake" -E cmake_link_script CMakeFiles/cmTryCompileExec.dir/link.txt --verbose=1
-/usr/bin/clang   -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior    -Wl,-search_paths_first -headerpad_max_install_names  CMakeFiles/cmTryCompileExec.dir/testCCompiler.c.o  -o cmTryCompileExec  
+/usr/bin/clang   -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior    -Wl,-search_paths_first -headerpad_max_install_names  CMakeFiles/cmTryCompileExec.dir/testCCompiler.c.o  -o cmTryCompileExec  
 
 
 Detecting C compiler ABI info compiled with the following output:
@@ -34,10 +34,10 @@ Run Build Command:/usr/bin/make "cmTryCompileExec/fast"
 /usr/bin/make -f CMakeFiles/cmTryCompileExec.dir/build.make CMakeFiles/cmTryCompileExec.dir/build
 "/Applications/CMake 2.8-2.app/Contents/bin/cmake" -E cmake_progress_report /Users/asher/Projects/rp/ruby/rargs/cspec/run/CMakeFiles/CMakeTmp/CMakeFiles 1
 Building C object CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o
-/usr/bin/clang   -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior      -o CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o   -c "/Applications/CMake 2.8-2.app/Contents/share/cmake-2.8/Modules/CMakeCCompilerABI.c"
+/usr/bin/clang   -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior      -o CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o   -c "/Applications/CMake 2.8-2.app/Contents/share/cmake-2.8/Modules/CMakeCCompilerABI.c"
 Linking C executable cmTryCompileExec
 "/Applications/CMake 2.8-2.app/Contents/bin/cmake" -E cmake_link_script CMakeFiles/cmTryCompileExec.dir/link.txt --verbose=1
-/usr/bin/clang   -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior    -Wl,-search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o  -o cmTryCompileExec   
+/usr/bin/clang   -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior    -Wl,-search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o  -o cmTryCompileExec   
 Apple clang version 2.0 (tags/Apple/clang-108.3)
 Target: x86_64-apple-darwin10
 Thread model: posix
@@ -52,10 +52,10 @@ Parsed C implicit link information from above output:
   ignore line: [/usr/bin/make -f CMakeFiles/cmTryCompileExec.dir/build.make CMakeFiles/cmTryCompileExec.dir/build]
   ignore line: ["/Applications/CMake 2.8-2.app/Contents/bin/cmake" -E cmake_progress_report /Users/asher/Projects/rp/ruby/rargs/cspec/run/CMakeFiles/CMakeTmp/CMakeFiles 1]
   ignore line: [Building C object CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/usr/bin/clang   -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior      -o CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o   -c "/Applications/CMake 2.8-2.app/Contents/share/cmake-2.8/Modules/CMakeCCompilerABI.c"]
+  ignore line: [/usr/bin/clang   -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior      -o CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o   -c "/Applications/CMake 2.8-2.app/Contents/share/cmake-2.8/Modules/CMakeCCompilerABI.c"]
   ignore line: [Linking C executable cmTryCompileExec]
   ignore line: ["/Applications/CMake 2.8-2.app/Contents/bin/cmake" -E cmake_link_script CMakeFiles/cmTryCompileExec.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/clang   -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior    -Wl,-search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o  -o cmTryCompileExec   ]
+  ignore line: [/usr/bin/clang   -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior    -Wl,-search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTryCompileExec.dir/CMakeCCompilerABI.c.o  -o cmTryCompileExec   ]
   ignore line: [Apple clang version 2.0 (tags/Apple/clang-108.3)]
   ignore line: [Target: x86_64-apple-darwin10]
   ignore line: [Thread model: posix]

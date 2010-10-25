@@ -99,10 +99,35 @@ test/CMakeFiles/rargs_test.dir/rb_Rargs_define_spec.c.o: /usr/local/include/cspe
 test/CMakeFiles/rargs_test.dir/rb_Rargs_define_spec.c.o: /usr/local/include/cspec/cspec_output_verbose.h
 test/CMakeFiles/rargs_test.dir/rb_Rargs_define_spec.c.o: /usr/local/include/cspec/cspec_private.h
 
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/debug.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/id.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/method.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/node.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/parse.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/defines.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/intern.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/missing.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/ruby.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/st.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/thread_pthread.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/thread_win32.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/vm_core.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/vm_opts.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/x86_64-darwin10.4.0/ruby/config.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/../../ext/rargs/rb_Rargs.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/../../ext/rargs/rb_Rargs_define.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/../../ext/rargs/rb_Rargs_error.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/../../ext/rargs/rb_Rargs_free.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/../../ext/rargs/rb_Rargs_parse.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/../../ext/rargs/rb_Rargs_types.h
 test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: ../test/rb_Rargs_parse_spec.c
 test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec.h
 test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec.h
 test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec_config.h
 test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec_output.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec_output_header.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec_output_unit.h
+test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec_output_verbose.h
 test/CMakeFiles/rargs_test.dir/rb_Rargs_parse_spec.c.o: /usr/local/include/cspec/cspec_private.h
 

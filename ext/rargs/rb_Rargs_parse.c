@@ -274,7 +274,7 @@ BOOL RARG_parse_PossibleMatch(		rarg_parse_descriptor_t*			parse_descriptor,
 BOOL RARG_parse_PossibleGroupMatch(	rarg_parse_descriptor_t*			parse_descriptor,
 																		rarg_possible_match_t*				possible_match,
 																		VALUE													rb_arg )	{
-
+	
 	rarg_possible_group_match_t*	possible_group_match	=	possible_match->possible->group;
 
 	BOOL	matched		=	TRUE;
@@ -285,6 +285,7 @@ BOOL RARG_parse_PossibleGroupMatch(	rarg_parse_descriptor_t*			parse_descriptor,
 																									possible_group_match->match,
 																									rb_arg ) ) )	{
 			
+			matched	=	FALSE;
 			break;
 		}
 		
@@ -320,6 +321,8 @@ BOOL RARG_parse_PossibleBlockMatch(		rarg_parse_descriptor_t*			parse_descriptor
 					||	( matched = RARG_parse_PossibleBlockArityMatch( possible_block_match->possible_arity,
 																															rb_arity ) ) )
 					&&	possible_match->receiver != NULL )	{
+
+			matched	=	TRUE;
 
 			( *parse_descriptor->matched_parameter_ptr )->block_match = TRUE;
 

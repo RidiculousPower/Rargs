@@ -1,4 +1,3 @@
-#include "rb_internal.h"
 #include <cspec.h>
 #include <cspec/cspec_output_header.h>
 #include <cspec/cspec_output_verbose.h>
@@ -7,6 +6,8 @@
 #include "../../ext/rargs/rb_Rargs.h"
 
 #include <string.h>
+
+#include "vm_core.h"
 
 #define RT_ParseDescriptor( parse_descriptor, passed_argc, passed_args )		parse_descriptor								=	calloc( 1, sizeof( rarg_parse_descriptor_t ) );														\
 																																						parse_descriptor->argc					=	passed_argc;																															\
@@ -19,101 +20,79 @@
 																																						parse_descriptor->matched_parameter_set	=	calloc( 1, sizeof( rarg_matched_parameter_set_t ) );							\
 																																						parse_descriptor->matched_parameter_ptr	=	& parse_descriptor->matched_parameter_set->parameters;
 
-/**********************************
-*  RARG_parse_PossibleGroupMatch  *
-**********************************/
-
-DESCRIBE( RARG_parse_PossibleGroupMatch, "RARG_parse_PossibleGroupMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
-	IT( "tests each possible match in a possible group match to see if this parameter matches for this possibility" )
-
-		rarg_parse_descriptor_t*	parse_descriptor;
-
-		VALUE	rb_arg_one	=	rb_str_new2( "a string" );
-		VALUE	rb_arg_two	=	ID2SYM( rb_intern( "a symbol" ) );
-		VALUE	args[] = { rb_arg_one, rb_arg_two };
-
-		VALUE	rb_string	=	Qnil;
-		VALUE	rb_symbol	=	Qnil;
-
-		//	Test 1 - match
-
-		RT_ParseDescriptor( parse_descriptor, 2, args );
-		rarg_possible_match_t*	possible_group_match	=	R_Group(	R_MatchString( rb_string ),
-																															R_MatchSymbol( rb_symbol ) );
-		BOOL	matched	=	RARG_parse_PossibleGroupMatch( parse_descriptor, possible_group_match, rb_arg_one );
-		SHOULD_BE_TRUE( matched );
-		SHOULD_EQUAL( parse_descriptor->matched_parameter_set->parameters->match, rb_arg_one );
-		SHOULD_EQUAL( *parse_descriptor->matched_parameter_set->parameters->receiver, rb_string );
-		SHOULD_EQUAL( parse_descriptor->matched_parameter_set->parameters->next->match, rb_arg_two );
-		SHOULD_EQUAL( *parse_descriptor->matched_parameter_set->parameters->next->receiver, rb_symbol );
-
-		//	test 2 - false match
-
-		//	make arg two not match
-		rb_arg_two	=	Qnil;
-		RT_ParseDescriptor( parse_descriptor, 2, args );
-		matched	=	RARG_parse_PossibleGroupMatch( parse_descriptor, possible_group_match, rb_arg_one );
-		SHOULD_BE_FALSE( matched );
-		
-	END_IT
-END_DESCRIBE
+//	this is a dirty hack to get around the problem of passing a block in C
+//	rb_iterate does not seem to pass a block as we might expect (even if the effect is the same,
+//	it doesn't use the block slot)
+//	we use eval to instantiate the block slot and globals in order to retain data during the call
+//	since we are just doing this for testing which will never be running multiple times at once,
+//	this shouldn't be a major concern, even if it is ugly.
+//	it is at least not as ugly as not having the block properly spec'ed at all.
+rarg_parse_descriptor_t*	RARG_parse_PossibleBlockMatch_parse_descriptor;
+rarg_possible_match_t*		RARG_parse_PossibleBlockMatch_possible_match;
+VALUE RARG_parse_PossibleBlockMatch_proc_relay( VALUE parse_descriptor_and_possible_match );
 
 /**********************************
 *  RARG_parse_PossibleBlockMatch  *
 **********************************/
 
-VALUE proc_function( VALUE yieldarg __attribute__ ((unused)), VALUE proc_self );
-VALUE proc_function( VALUE yieldarg __attribute__ ((unused)), VALUE proc_self ) { return proc_self; }
 DESCRIBE( RARG_parse_PossibleBlockMatch, "RARG_parse_PossibleBlockMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match )" )
 	IT( "tests for presence of passed block" )
-
-		VALUE	rb_block_proc	=	rb_proc_new( proc_function, rb_cObject );
-    rb_thread_t *th = GET_THREAD();
-		th->cfp->lfp[0] = GC_GUARDED_PTR( & block );
 		
-		rarg_parse_descriptor_t*	parse_descriptor;
-
-		VALUE	rb_arg_one	=	rb_proc_new( proc_function, rb_cObject );
-		VALUE	args[] = { rb_arg_one };
-		RT_ParseDescriptor( parse_descriptor, 1, args );
-
+		RARG_parse_PossibleBlockMatch_parse_descriptor	=	calloc( 1, sizeof( rarg_parse_descriptor_t ) );
+		RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set		=	calloc( 1, sizeof( rarg_matched_parameter_set_t ) );
+		RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_ptr		=	& RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set->parameters;
+		*RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_ptr	=	calloc( 1, sizeof( rarg_matched_parameter_t ) );
+		
 		VALUE	rb_block	=	Qnil;
-		rarg_possible_match_t*	possible_block_match					=	R_MatchBlockProc( rb_block );
-		rarg_parse_descriptor_and_possible_match_t*						parse_descriptor_and_possible_match	=	calloc( 1, sizeof( rarg_parse_descriptor_and_possible_match_t ) );
-		parse_descriptor_and_possible_match->parse_descriptor	=	parse_descriptor;
-		parse_descriptor_and_possible_match->possible_match		=	possible_block_match;
+		RARG_parse_PossibleBlockMatch_possible_match		=	R_MatchBlockProc( rb_block );
 		
-		rb_iterate( RARG_parse_PossibleBlockMatch_proc_relay, (VALUE) parse_descriptor_and_possible_match, proc_function, rb_arg_one );
-
-		BOOL	matched	=	(BOOL) parse_descriptor_and_possible_match;
-
+		BOOL matched = rb_eval_string( "RARG_parse_PossibleBlockMatch_proc_relay( Object ) { |arg| return arg }" );
+		
 		SHOULD_BE_TRUE( matched );
-		SHOULD_NOT_BE_NULL( parse_descriptor->matched_parameter_set->parameters );
-		SHOULD_NOT_BE_NULL( parse_descriptor->matched_parameter_set->parameters->match );
 
-		SHOULD_EQUAL( parse_descriptor->matched_parameter_set->parameters->match, rb_arg_one );
-		SHOULD_EQUAL( *parse_descriptor->matched_parameter_set->parameters->receiver, rb_block );
-		SHOULD_BE_TRUE( parse_descriptor->matched_parameter_set->parameters->block_match );
+		SHOULD_NOT_BE_NULL( RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set->parameters );
+		SHOULD_NOT_BE_NULL( RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set->parameters->match );
+
+		SHOULD_EQUAL( *RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set->parameters->receiver, rb_block );
+		SHOULD_BE_TRUE( RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set->parameters->block_match );
 
 	END_IT
 END_DESCRIBE
+
+VALUE RARG_parse_PossibleBlockMatch_proc_relay( VALUE arg __attribute__ ((unused)) )	{
+	
+	rarg_parse_descriptor_t*	parse_descriptor	=	RARG_parse_PossibleBlockMatch_parse_descriptor;
+	rarg_possible_match_t*		possible_match		=	RARG_parse_PossibleBlockMatch_possible_match;
+	
+	VALUE	matched	=	RARG_parse_PossibleBlockMatch(	parse_descriptor,
+																									possible_match );
+	
+	return matched;
+}
 
 /***************************************
 *  RARG_parse_PossibleBlockArityMatch  *
 ***************************************/
 
 DESCRIBE( RARG_parse_PossibleBlockArityMatch, "RARG_parse_PossibleBlockArityMatch( rarg_possible_block_match_arity_t* possible_arity_match, VALUE rb_arity )" )
-	IT( "tests arity of apassed block" )
+	IT( "tests arity of a passed block" )
 
-	END_IT
-END_DESCRIBE
+		RARG_parse_PossibleBlockMatch_parse_descriptor	=	calloc( 1, sizeof( rarg_parse_descriptor_t ) );
+		RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set		=	calloc( 1, sizeof( rarg_matched_parameter_set_t ) );
+		RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_ptr		=	& RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_set->parameters;
+		*RARG_parse_PossibleBlockMatch_parse_descriptor->matched_parameter_ptr	=	calloc( 1, sizeof( rarg_matched_parameter_t ) );
+		
+		VALUE	rb_block	=	Qnil;
+		RARG_parse_PossibleBlockMatch_possible_match		=	R_MatchBlockProcWithArity( rb_block, 1, 3 );
+		
+		VALUE matched = rb_eval_string( "RARG_parse_PossibleBlockMatch_proc_relay( Object ) { |arg| return arg }" );
+		SHOULD_BE_TRUE( matched );
 
-	/******************************************
-	*  RARG_parse_PossibleHashKeyOrDataMatch  *
-	******************************************/
+		matched = rb_eval_string( "RARG_parse_PossibleBlockMatch_proc_relay( Object ) { |arg_one, arg_two| return arg_one }" );
+		SHOULD_BE_FALSE( matched );
 
-DESCRIBE( RARG_parse_PossibleHashKeyOrDataMatch, "RARG_parse_PossibleHashKeyOrDataMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_hash_key_data_match_t* possible_hash_key_or_data, VALUE rb_hash_arg, VALUE rb_key_or_data )" )
-	IT( "tests for match against key or data of current hash match" )
+		matched = rb_eval_string( "RARG_parse_PossibleBlockMatch_proc_relay( Object ) { |arg_one, arg_two, arg_three| return arg_one }" );
+		SHOULD_BE_TRUE( matched );
 
 	END_IT
 END_DESCRIBE
@@ -124,7 +103,10 @@ END_DESCRIBE
 
 DESCRIBE( RARG_parse_PossibleIndexMatch, "RARG_parse_PossibleIndexMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
 	IT( "tests for match against index of current hash match" )
-
+		VALUE	rb_data	=	Qnil;
+		rarg_possible_match_t*	possible_index_match	=	R_MatchIndex( rb_data, "index" );
+		
+		
 	END_IT
 END_DESCRIBE
 
@@ -134,6 +116,17 @@ END_DESCRIBE
 
 DESCRIBE( RARG_parse_PossibleHashMatch, "RARG_parse_PossibleHashMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
 	IT( "tests for presence of hash, potentially also checking key/data for matches, or looking for the presence of indexes with optional data matching" )
+		rarg_parse_descriptor_t*	parse_descriptor;
+		VALUE	args[]	=	{};
+		RT_ParseDescriptor( parse_descriptor, 2, args );
+
+		rarg_possible_hash_key_data_match_t*	possible_hash_key_data_match	=	R_Key( R_String() );
+		SHOULD_BE_FALSE( possible_hash_key_data_match->assign_parent_hash_for_match );
+		SHOULD_NOT_BE_NULL( possible_hash_key_data_match->possible_match );
+
+		VALUE	rb_hash;
+		possible_hash_key_data_match	=	R_MatchKeyForHash( rb_hash, R_String() );
+		SHOULD_BE_TRUE( possible_hash_key_data_match->assign_parent_hash_for_match );
 
 	END_IT
 END_DESCRIBE
@@ -196,6 +189,45 @@ END_DESCRIBE
 DESCRIBE( RARG_parse_PossibleIfElseMatch, "RARG_parse_PossibleIfElseMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match __attribute__ ((unused )), rarg_possible_if_else_match_t* possible_if_else_match, VALUE rb_arg )" )
 	IT( "allows conditional match testing, grouping together conditional matches" )
 
+	END_IT
+END_DESCRIBE
+
+/**********************************
+*  RARG_parse_PossibleGroupMatch  *
+**********************************/
+
+DESCRIBE( RARG_parse_PossibleGroupMatch, "RARG_parse_PossibleGroupMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
+	IT( "tests each possible match in a possible group match to see if this parameter matches for this possibility" )
+
+		rarg_parse_descriptor_t*	parse_descriptor;
+
+		VALUE	rb_arg_one	=	rb_str_new2( "a string" );
+		VALUE	rb_arg_two	=	ID2SYM( rb_intern( "a symbol" ) );
+		VALUE	args[] = { rb_arg_one, rb_arg_two };
+
+		VALUE	rb_string	=	Qnil;
+		VALUE	rb_symbol	=	Qnil;
+
+		//	Test 1 - match
+
+		RT_ParseDescriptor( parse_descriptor, 2, args );
+		rarg_possible_match_t*	possible_group_match	=	R_Group(	R_MatchString( rb_string ),
+																															R_MatchSymbol( rb_symbol ) );
+		BOOL	matched	=	RARG_parse_PossibleGroupMatch( parse_descriptor, possible_group_match, rb_arg_one );
+		SHOULD_BE_TRUE( matched );
+		SHOULD_EQUAL( parse_descriptor->matched_parameter_set->parameters->match, rb_arg_one );
+		SHOULD_EQUAL( *parse_descriptor->matched_parameter_set->parameters->receiver, rb_string );
+		SHOULD_EQUAL( parse_descriptor->matched_parameter_set->parameters->next->match, rb_arg_two );
+		SHOULD_EQUAL( *parse_descriptor->matched_parameter_set->parameters->next->receiver, rb_symbol );
+
+		//	test 2 - false match
+
+		//	make arg two not match
+		RT_ParseDescriptor( parse_descriptor, 2, args );
+		VALUE	args_two[]	=	{ rb_cObject, rb_ary_new() };
+		matched	=	RARG_parse_PossibleGroupMatch( parse_descriptor, possible_group_match, *args_two );
+		SHOULD_BE_FALSE( matched );
+		
 	END_IT
 END_DESCRIBE
 
@@ -338,7 +370,11 @@ END_DESCRIBE
 
 void rb_Rargs_Parse_spec( void )	{
 	
-//	CSpec_Run( DESCRIPTION( RARG_parse_PossibleGroupMatch ), CSpec_NewOutputVerbose() );
+	rb_define_method( rb_cObject, "RARG_parse_PossibleBlockMatch_proc_relay", RARG_parse_PossibleBlockMatch_proc_relay, 1 );
+	
 	CSpec_Run( DESCRIPTION( RARG_parse_PossibleBlockMatch ), CSpec_NewOutputVerbose() );
+	CSpec_Run( DESCRIPTION( RARG_parse_PossibleBlockArityMatch ), CSpec_NewOutputVerbose() );
+
+	CSpec_Run( DESCRIPTION( RARG_parse_PossibleGroupMatch ), CSpec_NewOutputVerbose() );
 
 }
