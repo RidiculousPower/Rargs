@@ -457,10 +457,10 @@ BOOL RARG_parse_PossibleHashMatch(		rarg_parse_descriptor_t*			parse_descriptor,
 			if (		possible_index_match->index_name
 									//	symbol
 					&&	(		( rb_index_ref	=	rb_hash_aref(	rb_arg,
-																									ID2SYM( rb_intern( possible_index_match->index_name ) ) != Qnil ) )
+																									ID2SYM( rb_intern( possible_index_match->index_name ) ) ) ) != Qnil
 									//	or string
 							||	( rb_index_ref	=	rb_hash_aref(	rb_arg,
-																									rb_str_new2( possible_index_match->index_name ) ) ) ) )	{
+																									rb_str_new2( possible_index_match->index_name ) ) ) != Qnil ) )	{
 				
 				//	if we get to this point we match
 				if (		possible_index_match->receiver != NULL

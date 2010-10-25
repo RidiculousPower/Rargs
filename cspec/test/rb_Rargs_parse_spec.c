@@ -97,47 +97,39 @@ DESCRIBE( RARG_parse_PossibleBlockArityMatch, "RARG_parse_PossibleBlockArityMatc
 	END_IT
 END_DESCRIBE
 
-	/**********************************
-	*  RARG_parse_PossibleIndexMatch  *
-	**********************************/
-
-DESCRIBE( RARG_parse_PossibleIndexMatch, "RARG_parse_PossibleIndexMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
-	IT( "tests for match against index of current hash match" )
-		VALUE	rb_data	=	Qnil;
-		rarg_possible_match_t*	possible_index_match	=	R_MatchIndex( rb_data, "index" );
-		
-		
-	END_IT
-END_DESCRIBE
-
-/*********************************
-*  RARG_parse_PossibleHashMatch  *
-*********************************/
-
-DESCRIBE( RARG_parse_PossibleHashMatch, "RARG_parse_PossibleHashMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
-	IT( "tests for presence of hash, potentially also checking key/data for matches, or looking for the presence of indexes with optional data matching" )
-		rarg_parse_descriptor_t*	parse_descriptor;
-		VALUE	args[]	=	{};
-		RT_ParseDescriptor( parse_descriptor, 2, args );
-
-		rarg_possible_hash_key_data_match_t*	possible_hash_key_data_match	=	R_Key( R_String() );
-		SHOULD_BE_FALSE( possible_hash_key_data_match->assign_parent_hash_for_match );
-		SHOULD_NOT_BE_NULL( possible_hash_key_data_match->possible_match );
-
-		VALUE	rb_hash;
-		possible_hash_key_data_match	=	R_MatchKeyForHash( rb_hash, R_String() );
-		SHOULD_BE_TRUE( possible_hash_key_data_match->assign_parent_hash_for_match );
-
-	END_IT
-END_DESCRIBE
-
-
 /*********************************
 *  RARG_parse_PossibleTypeMatch  *
 *********************************/
 
 DESCRIBE( RARG_parse_PossibleTypeMatch, "RARG_parse_PossibleTypeMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
-	IT( "tests whether current arg is a given underying type (R_... which correspond in name to T_..., always in caps)" )
+	IT( "tests whether current arg is a given underying type (R_<type> which correspond in name to Ruby's T_<type>, always in caps)" )
+
+		rarg_parse_descriptor_t*	parse_descriptor;
+
+		VALUE	rb_array	=	rb_ary_new();
+		VALUE	args[]	=	{ rb_array };
+		RT_ParseDescriptor( parse_descriptor, 1, args );
+		parse_descriptor->matched_parameter_ptr		=	& parse_descriptor->matched_parameter_set->parameters;
+		*parse_descriptor->matched_parameter_ptr	=	calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
+		VALUE	rb_array_match	=	Qnil;
+		rarg_possible_match_t*	possible_match	=	R_MatchType( rb_array_match, R_ARRAY );
+		
+		BOOL	matched	=	RARG_parse_PossibleTypeMatch(	parse_descriptor,
+																									possible_match,
+																									rb_array );		
+		SHOULD_BE_TRUE( matched );
+		
+		VALUE	rb_string	=	rb_str_new2( "some string" );
+		VALUE	args_two[]	=	{ rb_string };
+		RT_ParseDescriptor( parse_descriptor, 1, args_two );
+		parse_descriptor->matched_parameter_ptr		=	& parse_descriptor->matched_parameter_set->parameters;
+		*parse_descriptor->matched_parameter_ptr	=	calloc( 1, sizeof( rarg_matched_parameter_t ) );
+		
+		matched	=	RARG_parse_PossibleTypeMatch(	parse_descriptor,
+																						possible_match,
+																						rb_string );		
+		SHOULD_BE_FALSE( matched );
 
 	END_IT
 END_DESCRIBE
@@ -148,6 +140,23 @@ END_DESCRIBE
 
 DESCRIBE( RARG_parse_PossibleAncestorMatches, "RARG_parse_PossibleAncestorMatches( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
 	IT( "tests whether current arg has ancestor(s) in ancestors chain" )
+
+		rarg_parse_descriptor_t*	parse_descriptor;
+
+		VALUE	rb_array	=	rb_ary_new();
+		VALUE	args[]	=	{ rb_array };
+		RT_ParseDescriptor( parse_descriptor, 1, args );
+		parse_descriptor->matched_parameter_ptr		=	& parse_descriptor->matched_parameter_set->parameters;
+		*parse_descriptor->matched_parameter_ptr	=	calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
+		VALUE	rb_ancestor_match	=	Qnil;
+		rarg_possible_match_t*	possible_match	=	R_MatchAncestor( rb_ancestor_match, "Object" );
+		
+		BOOL	matched	=	RARG_parse_PossibleAncestorMatches(	parse_descriptor,
+																												possible_match,
+																												rb_cProc );		
+		SHOULD_BE_TRUE( matched );
+		
 
 	END_IT
 END_DESCRIBE
@@ -191,6 +200,84 @@ DESCRIBE( RARG_parse_PossibleIfElseMatch, "RARG_parse_PossibleIfElseMatch( rarg_
 
 	END_IT
 END_DESCRIBE
+
+	/**********************************
+	*  RARG_parse_PossibleIndexMatch  *
+	**********************************/
+
+DESCRIBE( RARG_parse_PossibleIndexMatch, "RARG_parse_PossibleIndexMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
+	IT( "tests for match against index of current hash match" )
+		
+		rarg_parse_descriptor_t*	parse_descriptor;
+
+		VALUE	rb_hash	=	rb_hash_new();
+		rb_hash_aset(	rb_hash,
+									ID2SYM( rb_intern( "key" ) ),
+									rb_str_new2( "data" ) );
+
+		VALUE	args[]	=	{ rb_hash };
+		RT_ParseDescriptor( parse_descriptor, 1, args );
+
+		VALUE	rb_data	=	Qnil;
+		rarg_possible_match_t*	possible_match	=	R_MatchIndex( rb_data, "key" );
+		
+		BOOL	matched	=	RARG_parse_PossibleIndexMatch(	parse_descriptor,
+																										possible_match,
+																										rb_hash );		
+		SHOULD_BE_TRUE( matched );
+		
+		matched = FALSE;
+		
+		VALUE	rb_hash_two	=	rb_hash_new();
+		rb_hash_aset(	rb_hash_two,
+									ID2SYM( rb_intern( "another_key" ) ),
+									rb_str_new2( "data" ) );
+		VALUE	args_two[]	=	{ rb_hash_two };
+		RT_ParseDescriptor( parse_descriptor, 1, args_two );
+		matched	=	RARG_parse_PossibleIndexMatch(	parse_descriptor,
+																							possible_match,
+																							rb_hash_two );		
+		SHOULD_BE_FALSE( matched );
+		
+	END_IT
+END_DESCRIBE
+
+/*********************************
+*  RARG_parse_PossibleHashMatch  *
+*********************************/
+
+DESCRIBE( RARG_parse_PossibleHashMatch, "RARG_parse_PossibleHashMatch( rarg_parse_descriptor_t* parse_descriptor, rarg_possible_match_t* possible_match, VALUE rb_arg )" )
+	IT( "tests for presence of hash, potentially also checking key/data for matches, or looking for the presence of indexes with optional data matching" )
+
+		rarg_parse_descriptor_t*	parse_descriptor;
+		VALUE	rb_hash	=	rb_hash_new();
+		rb_hash_aset(	rb_hash,
+									ID2SYM( rb_intern( "key" ) ),
+									rb_str_new2( "data" ) );
+		VALUE	args[]	=	{ rb_hash };
+		RT_ParseDescriptor( parse_descriptor, 1, args );
+
+		rarg_possible_match_t*	possible_match	=	R_Hash(	R_Key(	R_Symbol() ),
+																											R_Data(	R_String() ) );
+		BOOL	matched	=	RARG_parse_PossibleHashMatch(	parse_descriptor,
+																									possible_match,
+																									rb_hash );		
+		SHOULD_BE_TRUE( matched );
+		
+		VALUE	rb_array	=	rb_ary_new();
+		VALUE	args_two[]	=	{ rb_array };
+		RT_ParseDescriptor( parse_descriptor, 1, args_two );
+
+		matched	=	RARG_parse_PossibleHashMatch(	parse_descriptor,
+																						possible_match,
+																						rb_array );		
+
+		SHOULD_BE_FALSE( matched );
+
+	END_IT
+END_DESCRIBE
+
+
 
 /**********************************
 *  RARG_parse_PossibleGroupMatch  *
@@ -374,6 +461,12 @@ void rb_Rargs_Parse_spec( void )	{
 	
 	CSpec_Run( DESCRIPTION( RARG_parse_PossibleBlockMatch ), CSpec_NewOutputVerbose() );
 	CSpec_Run( DESCRIPTION( RARG_parse_PossibleBlockArityMatch ), CSpec_NewOutputVerbose() );
+
+	CSpec_Run( DESCRIPTION( RARG_parse_PossibleTypeMatch ), CSpec_NewOutputVerbose() );
+	CSpec_Run( DESCRIPTION( RARG_parse_PossibleHashMatch ), CSpec_NewOutputVerbose() );
+	CSpec_Run( DESCRIPTION( RARG_parse_PossibleIndexMatch ), CSpec_NewOutputVerbose() );
+
+	CSpec_Run( DESCRIPTION( RARG_parse_PossibleAncestorMatches ), CSpec_NewOutputVerbose() );
 
 	CSpec_Run( DESCRIPTION( RARG_parse_PossibleGroupMatch ), CSpec_NewOutputVerbose() );
 

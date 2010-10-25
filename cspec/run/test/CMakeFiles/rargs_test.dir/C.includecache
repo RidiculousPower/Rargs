@@ -6,6 +6,22 @@
 
 #IncludeRegexTransform: 
 
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/debug.h
+ruby/ruby.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/ruby.h
+node.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/node.h
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/id.h
+parse.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/parse.h
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/method.h
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/node.h
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/parse.h
+
 /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby.h
 ruby/ruby.h
 /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/ruby.h
@@ -88,6 +104,46 @@ inttypes.h
 limits.h
 -
 
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/thread_pthread.h
+pthread.h
+-
+pthread_np.h
+-
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/thread_win32.h
+windows.h
+-
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/vm_core.h
+ruby/ruby.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/ruby.h
+ruby/st.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/ruby/st.h
+node.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/node.h
+debug.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/debug.h
+vm_opts.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/vm_opts.h
+id.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/id.h
+method.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/method.h
+thread_win32.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/thread_win32.h
+thread_pthread.h
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/thread_pthread.h
+setjmp.h
+-
+signal.h
+-
+stdarg.h
+-
+varargs.h
+-
+
+/Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/vm_opts.h
+
 /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/x86_64-darwin10.4.0/ruby/config.h
 
 /Users/asher/Projects/rp/ruby/rargs/cspec/test/../../ext/rargs/rb_Rargs.h
@@ -132,7 +188,7 @@ rb_Rargs_define.h
 ruby.h
 -
 
-/Users/asher/Projects/rp/ruby/rargs/cspec/test/rb_Rargs_define_spec.c
+/Users/asher/Projects/rp/ruby/rargs/cspec/test/rb_Rargs_parse_spec.c
 cspec.h
 -
 cspec/cspec_output_header.h
@@ -145,6 +201,8 @@ cspec/cspec_output_unit.h
 /Users/asher/Projects/rp/ruby/rargs/cspec/test/../../ext/rargs/rb_Rargs.h
 string.h
 -
+vm_core.h
+/Users/asher/Projects/rp/ruby/rargs/cspec/test/vm_core.h
 
 /usr/local/include/cspec.h
 cspec/cspec.h
