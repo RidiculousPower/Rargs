@@ -64,7 +64,7 @@ rarg_matched_parameter_set_t* RARG_parse_ParameterSets(	rarg_parse_descriptor_t*
 
 		// if all parameters in a parameter_set match args
 		if ( ( parse_descriptor->matched_parameter_set->last_arg	=	RARG_parse_Parameters(	parse_descriptor,
-																																			parameter_set->parameters ) )
+																																												parameter_set->parameters ) )
 
 			//	if we require exact match and have args remaining we don't match
 			&&	(		! parameter_set->require_exact
@@ -91,7 +91,7 @@ rarg_matched_parameter_set_t* RARG_parse_ParameterSets(	rarg_parse_descriptor_t*
 BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor, 
 														rarg_parameter_t*								parameter )	{
 	
-	int			c_which_arg	=	0;
+	parse_descriptor->args_parsed	=	0;
 			
 	if (		! parse_descriptor->argc
 			&&	parameter->possible_match->type == RARG_BLOCK
@@ -99,10 +99,10 @@ BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor,
 			
 			if ( RARG_parse_PossibleMatches(	parse_descriptor,
 																				parameter ) )	{
-				c_which_arg = TRUE;
+				parse_descriptor->args_parsed = TRUE;
 			}
 			else	{
-				c_which_arg = FALSE;
+				parse_descriptor->args_parsed = FALSE;
 			}
 	}
 	else while(		parameter != NULL )	{
@@ -119,14 +119,14 @@ BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor,
 																					parameter )
 				&&	! parameter->optional ) {
 				
-			c_which_arg = FALSE;
+			parse_descriptor->args_parsed = FALSE;
 			break;
 		}
 		
 		parameter	= parameter->next;
 		//	don't advance count if we matched block - doesn't correspond to args
 		if ( ! ( *parse_descriptor->matched_parameter_ptr )->block_match )	{
-			c_which_arg++;		
+			parse_descriptor->args_parsed++;		
 		}
 	}
 
@@ -134,7 +134,7 @@ BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor,
 	//	* we have the option of requiring exact match (in which case we test which_parameter == argc)
 	//	* or of allowing repeats, in which case we return the index of the next unused arg
 	//	we test for this after return, in parameter set
-	return c_which_arg;
+	return parse_descriptor->args_parsed;
 }
 
 /***********************************************************************************************************************

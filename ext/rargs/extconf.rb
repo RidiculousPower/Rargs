@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'mkmfmf'
+require 'rbconfig'
 
 target  = "rargs"
 
@@ -14,3 +15,5 @@ if ensure_core_headers( required_core_headers )
   	create_makefile( target )
   end
 end
+
+FileUtils.cp( Dir.glob( "./*.h" ), Config::CONFIG[ "rubyhdrdir" ] )

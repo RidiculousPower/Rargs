@@ -482,7 +482,7 @@ END_DESCRIBE
 
 
 
-void rb_Rargs_Define_spec( void )	{
+void rb_Rargs_define_spec( void )	{
 	
 	CSpec_Run( DESCRIPTION( R_Type ), CSpec_NewOutputVerbose() );
 	CSpec_Run( DESCRIPTION( R_Ancestor ), CSpec_NewOutputVerbose() );

@@ -188,6 +188,20 @@ rb_Rargs_define.h
 ruby.h
 -
 
+/Users/asher/Projects/rp/ruby/rargs/cspec/test/rb_Rargs_define_spec.c
+cspec.h
+-
+cspec/cspec_output_header.h
+-
+cspec/cspec_output_verbose.h
+-
+cspec/cspec_output_unit.h
+-
+../../ext/rargs/rb_Rargs.h
+/Users/asher/Projects/rp/ruby/rargs/cspec/test/../../ext/rargs/rb_Rargs.h
+string.h
+-
+
 /Users/asher/Projects/rp/ruby/rargs/cspec/test/rb_Rargs_parse_spec.c
 cspec.h
 -
