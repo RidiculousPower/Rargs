@@ -2,6 +2,7 @@
 
 require 'mkmfmf'
 require 'rbconfig'
+require 'core-source'
 
 target  = "rargs"
 
@@ -16,4 +17,7 @@ if ensure_core_headers( required_core_headers )
   end
 end
 
-FileUtils.cp( Dir.glob( "./*.h" ), Config::CONFIG[ "rubyhdrdir" ] )
+header_files = Dir.glob( "../../../../ext/rargs/*.h" )
+header_dir = Config::CONFIG[ "rubyhdrdir" ]
+puts 'Installing headers: ' + header_files.to_s + ' into ' + header_dir.to_s
+FileUtils.cp( header_files, header_dir )

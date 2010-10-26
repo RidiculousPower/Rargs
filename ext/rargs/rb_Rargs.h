@@ -7,8 +7,6 @@
 	#include "rb_Rargs_free.h"
 	#include "rb_Rargs_error.h"
 
-	extern	rarg_possible_type_match_t*	rarg_tmp;
-
 	/*
 	
 		R_ParameterSet							can take:	R_Parameter
@@ -177,7 +175,7 @@
 																																					          R_Parse();
                                                                                 
 	//	copy init info to pass internally - we leave the originally argc/args alone
-	#define R_Init( passed_argc, passed_args, passed_rb_self )							          static rarg_parse_descriptor_t				rarg_parse_descriptor;					\
+	#define R_Init( passed_argc, passed_args, passed_rb_self )							          rarg_parse_descriptor_t								rarg_parse_descriptor;					\
 																																					          rarg_parse_descriptor.argc						= passed_argc;								\
 																																					          rarg_parse_descriptor.args						=	passed_args;								\
 																																					          rarg_parse_descriptor.args_parsed			=	0;													\
@@ -185,7 +183,7 @@
                                                                                     
 	//	we define rarg_parameter_sets as static so that the first time the method runs its arg definition structs are defined
 	//	after that we only have to parse, not re-define                               
-	#define R_Define( argc, args, rb_self, parameter_set, ... )												R_Init( passed_argc, passed_args, passed_rb_self );								\
+	#define R_Define( passed_argc, passed_args, passed_rb_self, parameter_set, ... )	R_Init( passed_argc, passed_args, passed_rb_self );								\
 																																										rarg_parameter_set_t*	rarg_parameter_sets	=	RARG_define_ParameterSets( parameter_set,##__VA_ARGS__, NULL );
                                                                                     
                                                                                     
@@ -321,11 +319,16 @@
 	#define R_ArgsRemaining()																													( rarg_parse_descriptor.argc - rarg_parse_descriptor.args_parsed )
 	#define R_RemainingArgs()																													( rarg_parse_descriptor.args + rarg_parse_descriptor.args_parsed )
 
-	#define R_Arg( receiver )																													RI_NextArg( receiver, ( & rarg_parse_descriptor ) )
-
+	#define R_Arg( receiver )																													\
+		( ( rarg_parse_descriptor.args_parsed < rarg_parse_descriptor.argc ) ?																																											\
+							( ( receiver = rarg_parse_descriptor.args[ ++rarg_parse_descriptor.args_parsed ] ) != Qnil )																				\
+							: FALSE )
 	#define R_IterateHashDescriptor( rb_hash, c_function, ... )												RARG_parse_IterateHashDescriptor( & rarg_parse_descriptor, rb_hash, c_function,##__VA_ARGS__, Qnil )
 	#define R_IterateHash( rb_hash, c_function, ... )																	R_IterateHashDescriptor( rb_hash, c_function,##__VA_ARGS__ )
 	#define R_IterateArrayDescriptor( rb_array, c_function, ... )											RARG_parse_IterateArrayDescriptor( & rarg_parse_descriptor, rb_array, c_function,##__VA_ARGS__, Qnil )
 	#define R_IterateArray( rb_array, c_function, ... )																R_IterateArrayDescriptor( rb_array, c_function,##__VA_ARGS__ )
-		
+	
+	extern	rarg_possible_type_match_t*	rarg_tmp;
+	void Init_rargs();
+
 #endif
