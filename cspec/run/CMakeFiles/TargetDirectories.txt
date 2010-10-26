@@ -1,1 +1,0 @@
-/Users/asher/Projects/rp/ruby/rargs/cspec/run/test/CMakeFiles/rargs_test.dir
