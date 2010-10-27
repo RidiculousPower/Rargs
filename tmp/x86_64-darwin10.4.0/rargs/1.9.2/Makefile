@@ -60,8 +60,8 @@ warnflags = -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwri
 CFLAGS   = -fno-common -march=x86-64 -gfull -fcatch-undefined-behavior -fno-common -fsigned-char -pipe 
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir) -I../../../../ext/rargs
 DEFS     = 
-CPPFLAGS =  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE $(DEFS) $(cppflags)
-CXXFLAGS = $(CFLAGS) -march=x86-64 -g-dwarf2 -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior
+CPPFLAGS = -DHAVE_VM_CORE_H -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE $(DEFS) $(cppflags)
+CXXFLAGS = $(CFLAGS) -march=x86-64 -g -fno-common -fsigned-char -pipe -Wall -Wextra -fcatch-undefined-behavior
 ldflags  = -L. -L/usr/local/lib
 dldflags = -Wl,-undefined,dynamic_lookup -Wl,-multiply_defined,suppress -Wl,-flat_namespace
 ARCH_FLAG = 
@@ -105,8 +105,8 @@ extout_prefix =
 target_prefix = 
 LOCAL_LIBS = 
 LIBS = $(LIBRUBYARG_SHARED)  -lpthread -ldl -lobjc 
-SRCS = rb_Rargs_define.c rb_Rargs_describe.c rb_Rargs_error.c rb_Rargs_free.c rb_Rargs_parse.c
-OBJS = rb_Rargs_define.o rb_Rargs_describe.o rb_Rargs_error.o rb_Rargs_free.o rb_Rargs_parse.o
+SRCS = rb_Rargs.c rb_Rargs_define.c rb_Rargs_describe.c rb_Rargs_error.c rb_Rargs_free.c rb_Rargs_parse.c
+OBJS = rb_Rargs.o rb_Rargs_define.o rb_Rargs_describe.o rb_Rargs_error.o rb_Rargs_free.o rb_Rargs_parse.o
 TARGET = rargs
 DLLIB = $(TARGET).bundle
 EXTSTATIC = 
