@@ -6,7 +6,7 @@ project( rargs C )
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/" )
 
 #	where to look for source files (headers and source)
-include_directories( rargs/include rargs/include/rpdb )
+include_directories( rargs/include )
 
 #	define sub-directories of source that cmake knows about as well a where their output will be put
 add_subdirectory( rargs )

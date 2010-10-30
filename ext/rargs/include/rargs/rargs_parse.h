@@ -7,7 +7,8 @@
 	#include "rargs_define.h"
 
 BOOL RARG_parse_ParameterSetsForMatch(	rarg_parse_descriptor_t*	parse_descriptor,
-																				rarg_parameter_set_t*			parameter_sets );	
+																				rarg_parameter_set_t*			parameter_sets,
+																				BOOL											raise_exception_on_match_fail );	
 rarg_matched_parameter_set_t* RARG_parse_ParameterSets(	rarg_parse_descriptor_t*		parse_descriptor, 
 																												rarg_parameter_set_t*				parameter_set );	
 BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor, 

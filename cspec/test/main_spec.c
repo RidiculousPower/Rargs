@@ -9,8 +9,8 @@ int main( void )	{
 	
 	ruby_init();
 
-	rb_Rargs_define_spec();
-	rb_Rargs_parse_spec();
-//	rb_Rargs_macro_spec();
+//	rb_Rargs_define_spec();
+//	rb_Rargs_parse_spec();
+	rb_Rargs_macro_spec();
 
 }

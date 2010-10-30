@@ -1,0 +1,2 @@
+/usr/bin/ar cr ../librargs.dylib  CMakeFiles/rargs.dir/rargs.c.o CMakeFiles/rargs.dir/rargs_define.c.o CMakeFiles/rargs.dir/rargs_describe.c.o CMakeFiles/rargs.dir/rargs_error.c.o CMakeFiles/rargs.dir/rargs_free.c.o CMakeFiles/rargs.dir/rargs_parse.c.o
+/usr/bin/ranlib ../librargs.dylib

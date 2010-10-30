@@ -36,7 +36,7 @@ set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
 
 # Set the build version (VERSION) and the API version (SOVERSION)
 set_target_properties( rargs	PROPERTIES	LINKER_LANGUAGE C 
-																					OUTPUT_NAME "../rargs"
+																					OUTPUT_NAME "../librargs"
 																					PREFIX ""
 																					SUFFIX ".dylib"
 																					LINK_FLAGS "-Wl,-rpath,-L${CMAKE_INSTALL_RPATH}"
@@ -47,4 +47,4 @@ set_target_properties( rargs	PROPERTIES	LINKER_LANGUAGE C
 # Installation of the library
 install( TARGETS rargs DESTINATION lib PERMISSIONS OWNER_READ GROUP_READ WORLD_READ )
 INSTALL( FILES ${RARGS_HEADERS} DESTINATION "include/rargs" )
-INSTALL( FILES "${cmake_current_include_dir}/../rargs.h" DESTINATION "include" )
+INSTALL( FILES "${cmake_current_include_dir}/rargs.h" DESTINATION "include" )

@@ -56,6 +56,10 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 																																					VALUE*									receiver );
 		rarg_possible_hash_key_data_match_t* RARG_define_PossibleMatch_assignHashForKeyDataMatchToValue(	rarg_possible_hash_key_data_match_t*	possible_hash_key_or_data_match, 
 																																																			VALUE*																receiver );
+	rarg_possible_match_t* definePossibleMatch_assignIndexMatchToValue(	rarg_possible_match_t*	possible_index_match, 
+																																			VALUE*												receiver );
+	rarg_possible_hash_key_data_match_t* definePossibleMatch_assignHashKeyDataMatchToValue(	rarg_possible_hash_key_data_match_t*		possible_hash_key_data_match, 
+																																													VALUE*																	receiver );
 	rarg_parameter_set_t* RARG_define_ParameterSet_description(	rarg_parameter_set_t*		parameter_set,
 																															int											order_ranking,
 																															char*										description, ... );	
