@@ -20,6 +20,19 @@ git@github.com:Asher-/Rargs.git
 
 == EXAMPLE:
 
+VALUE	rb_index								=	Qnil;
+VALUE	rb_secondary_database		=	Qnil;
+
+VALUE	rb_callback_proc				=	Qnil;
+VALUE	rb_callback_object			=	Qnil;
+VALUE	rb_callback_method			=	Qnil;
+
+VALUE	rb_callback_method_name_in_secondary	=	Qnil;
+VALUE	rb_callback_method_name_in_primary		=	Qnil;
+
+//	we always have :index
+//	sometimes we have <secondary database>
+
 R_DefineAndParse( argc, args, rb_primary_database_self,
 
   R_DescribeParameterSet(
@@ -69,6 +82,8 @@ R_DefineAndParse( argc, args, rb_primary_database_self,
     ":index, <secondary database>, <callback_object> => :callback_method_in_object"
   )
 );
+
+//	Now use variables specified for matches (test for Qnil or get value from match)
 
 == LICENSE:
 
