@@ -1027,8 +1027,13 @@ VALUE RARG_parse_IterateHashDescriptor(	rarg_parse_descriptor_t*			parse_descrip
 											(VALUE) & rb_passed_info );
 
 		/* remaining args are hashes */
-	} while ( RI_NextArg( parse_descriptor, rb_hash ) );
+	} while (		RI_NextArg( parse_descriptor, rb_hash ) 
+					&&	TYPE( rb_hash ) == T_HASH );
 
+	//	if we got a non-hash, move args back
+	if ( TYPE( rb_hash ) != T_HASH )	{
+		parse_descriptor->args_parsed--;
+	}
 	
 	return rb_passed_info.rb_return_receiver;
 }
@@ -1079,7 +1084,13 @@ VALUE RARG_parse_IterateArrayDescriptor(	rarg_parse_descriptor_t*					parse_desc
 									rb_this_return );
 		
 		/* remaining args are arrays */
-	} while ( RI_NextArg( parse_descriptor, rb_array ) );
+	} while (		RI_NextArg( parse_descriptor, rb_array )
+					&&	TYPE( rb_array ) == T_ARRAY );
+
+	//	if we got a non-hash, move args back
+	if ( TYPE( rb_array ) != T_ARRAY )	{
+		parse_descriptor->args_parsed--;
+	}
 	
 	return rb_return;
 }
