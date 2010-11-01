@@ -12,7 +12,6 @@ git@github.com:Asher-/Rargs.git
 == INSTALL:
 
 	* git clone git@github.com:Asher-/Rargs.git
-	* mkdir Rargs/install
 	* cd Rargs/install
 	* cmake ../ext
 	* make
