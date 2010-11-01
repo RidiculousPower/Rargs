@@ -69,7 +69,7 @@ char* RARG_error_StringDescriptorForActualPassedArgs( int			argc,
 									args[ c_which_arg ] );
 	}
 	
-	VALUE	rb_map_proc	=	rb_eval_string( "lambda { |object| object.each_with_index.map { |member, index| ( \"\t\" + 'Arg ' + index.to_s + ':' + \"\t\" + member.inspect ) } }" );
+	VALUE	rb_map_proc	=	rb_eval_string( "lambda { |object| object.each_with_index.map { |member, index| ( '* Arg ' + index.to_s + ': ' + member.inspect ) } }" );
 	VALUE	rb_mapped_enumerator_for_join	=	rb_funcall( rb_map_proc,
 																										rb_intern( "call" ),
 																										1,

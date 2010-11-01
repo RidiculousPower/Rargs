@@ -90,12 +90,6 @@ limits.h
 
 /Users/asher/.rvm/rubies/ruby-1.9.2-p0/include/ruby-1.9.1/x86_64-darwin10.4.0/ruby/config.h
 
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_define.h
-ruby.h
--
-rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
-
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
 ruby.h
 -
@@ -108,51 +102,13 @@ ruby.h
 rargs_types.h
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_free.h
-ruby.h
--
-rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
-
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_parse.h
-ruby.h
--
-rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
-rargs_define.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_define.h
-
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 ruby.h
 -
-
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_define.c
-include/rargs/rargs_define.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_define.h
-include/rargs/rargs_error.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
-
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_describe.c
-include/rargs/rargs_describe.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_error.c
 include/rargs/rargs_error.h
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
 include/rargs/rargs_describe.h
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
-
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_free.c
-include/rargs/rargs_free.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_free.h
-
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_parse.c
-include/rargs/rargs_parse.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_parse.h
-include/rargs/rargs_describe.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
-include/rargs/rargs_error.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
-include/rargs/rargs_free.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_free.h
 
