@@ -93,68 +93,66 @@ limits.h
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_define.h
 ruby.h
 -
-rargs/rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs/rargs_types.h
+rargs_types.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
 ruby.h
 -
-rargs/rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs/rargs_types.h
+rargs_types.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
 ruby.h
 -
-rargs/rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs/rargs_types.h
+rargs_types.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_free.h
 ruby.h
 -
-rargs/rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs/rargs_types.h
+rargs_types.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_parse.h
 ruby.h
 -
-rargs/rargs_types.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs/rargs_types.h
-rargs/rargs_define.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs/rargs_define.h
+rargs_types.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
+rargs_define.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_define.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_types.h
 ruby.h
 -
 
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs.c
-
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_define.c
-rargs/rargs_define.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_define.h
-rargs/rargs_error.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_error.h
+include/rargs/rargs_define.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_define.h
+include/rargs/rargs_error.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_describe.c
-rargs/rargs_describe.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_describe.h
+include/rargs/rargs_describe.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_error.c
-rargs/rargs_error.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_error.h
-rargs/rargs_describe.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_describe.h
+include/rargs/rargs_error.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
+include/rargs/rargs_describe.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_free.c
-rargs/rargs_free.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_free.h
+include/rargs/rargs_free.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_free.h
 
 /Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs_parse.c
-rargs/rargs_parse.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_parse.h
-rargs/rargs_describe.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_describe.h
-rargs/rargs_error.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_error.h
-rargs/rargs_free.h
-/Users/asher/Projects/rp/ruby/rargs/ext/rargs/rargs/rargs_free.h
+include/rargs/rargs_parse.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_parse.h
+include/rargs/rargs_describe.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_describe.h
+include/rargs/rargs_error.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_error.h
+include/rargs/rargs_free.h
+/Users/asher/Projects/rp/ruby/rargs/ext/rargs/include/rargs/rargs_free.h
 

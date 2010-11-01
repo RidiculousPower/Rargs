@@ -339,6 +339,33 @@ rarg_possible_match_t* RARG_define_PossibleHashMatch(	rarg_possible_hash_key_dat
 	
 		return possible_hash_index_match;
 	}
+
+/********************************
+*  RARG_define_ProcMatch  *
+********************************/
+
+rarg_possible_match_t* RARG_define_ProcMatch()	{
+
+	rarg_possible_match_t*						possible_block_proc_match		= NULL;	
+	RI_CreatePossibleMatchWithProc(	possible_block_proc_match );
+
+	possible_block_proc_match->possible->block->arg_not_block	=	TRUE;
+
+	return possible_block_proc_match;
+}
+
+/**********************************
+*  RARG_define_LambdaMatch  *
+**********************************/
+
+rarg_possible_match_t* RARG_define_LambdaMatch()	{
+
+	rarg_possible_match_t*	possible_lambda_match	=	RARG_define_ProcMatch();
+	
+	possible_lambda_match->possible->block->lambda_instead_of_proc	=	TRUE;
+	
+	return possible_lambda_match;
+}
 	
 /********************************
 *  RARG_define_Block_procMatch  *
@@ -538,6 +565,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodReturns(	char*										method_
 	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
 
 	possible_method_return_match->possible->methods	=	RI_AllocPossibleMethodMatch();
+	possible_method_return_match->possible->methods->object = Qnil;
 	possible_method_return_match->possible->methods->method = rb_intern( method_name );
 	rarg_possible_method_response_match_t**	this_possible_method_response_match			=	& possible_method_return_match->possible->methods->possible_return;
 	
@@ -576,6 +604,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodReturnsWithArgs(	char*									
 	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
 
 	possible_method_return_match->possible->methods	=	RI_AllocPossibleMethodMatch();
+	possible_method_return_match->possible->methods->object = Qnil;
 	possible_method_return_match->possible->methods->method = rb_intern( method_name );
 	possible_method_return_match->possible->methods->argc = argc;
 	possible_method_return_match->possible->methods->args = args;
@@ -613,7 +642,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNil(	char* method_nam
 	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
 
 	rarg_possible_method_match_t**	this_possible_method_match			=	& possible_method_return_match->possible->methods;
-
+	
 	va_list	var_args;
 	va_start( var_args, method_name );
 
@@ -636,9 +665,9 @@ rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNil(	char* method_nam
 	return possible_method_return_match;	
 }
 
-/**********************************************
+/********************************************
 *  RARG_define_PossibleMethodReturnsNonNil  *
-**********************************************/
+********************************************/
 	
 rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		method_name,
 																																				int			argc,
@@ -650,6 +679,182 @@ rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		m
 
 	possible_method_return_match->possible->methods	=	RI_AllocPossibleMethodMatch();			
 
+	possible_method_return_match->possible->methods->method = rb_intern( method_name );
+	possible_method_return_match->possible->methods->argc = argc;
+	possible_method_return_match->possible->methods->args = args;
+	possible_method_return_match->possible->methods->ensure_return_non_nil = TRUE;
+
+	return possible_method_return_match;	
+}
+
+/************************************************
+*  RARG_define_PossibleMethodRespondsForObject  *
+************************************************/
+	
+rarg_possible_match_t* RARG_define_PossibleMethodRespondsForObject(	VALUE					rb_object,
+																																		char*					method_name, ... )	{
+
+	rarg_possible_match_t*			possible_method_return_match		= NULL;	
+	RI_CreatePossibleMatch( possible_method_return_match );
+	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
+
+	rarg_possible_method_match_t**	this_possible_method_match			=	& possible_method_return_match->possible->methods;
+
+	va_list	var_args;
+	va_start( var_args, method_name );
+
+		while( method_name != NULL )	{
+			
+			//	make sure we are at the end of the current chain
+			while ( *this_possible_method_match != NULL )	{
+				this_possible_method_match	=	& ( *this_possible_method_match )->next;
+			}
+			*this_possible_method_match	=	RI_AllocPossibleMethodMatch();			
+
+			( *this_possible_method_match )->object = rb_object;
+			( *this_possible_method_match )->method = rb_intern( method_name );
+
+			method_name = va_arg( var_args, char* );
+		}
+		
+	va_end( var_args );
+
+	return possible_method_return_match;	
+}
+
+
+/***********************************************
+*  RARG_define_PossibleMethodReturnsForObject  *
+***********************************************/
+	
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsForObject(	VALUE										rb_object,
+																																		char*										method_name, 
+																																		VALUE										possible_method_return, ... )	{
+
+	rarg_possible_match_t*			possible_method_return_match		= NULL;	
+	RI_CreatePossibleMatch( possible_method_return_match );
+	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
+
+	possible_method_return_match->possible->methods	=	RI_AllocPossibleMethodMatch();
+	possible_method_return_match->possible->methods->object = rb_object;
+	possible_method_return_match->possible->methods->method = rb_intern( method_name );
+	rarg_possible_method_response_match_t**	this_possible_method_response_match			=	& possible_method_return_match->possible->methods->possible_return;
+	
+	va_list	var_args;
+	va_start( var_args, possible_method_return );
+
+		while( possible_method_return != Qnil )	{
+			
+			//	make sure we are at the end of the current chain
+			while ( *this_possible_method_response_match != NULL )	{
+				this_possible_method_response_match	=	& ( *this_possible_method_response_match )->next;
+			}
+			*this_possible_method_response_match	=	RI_AllocPossibleMethodReturnMatch();			
+
+			( *this_possible_method_response_match )->value = possible_method_return;
+
+			possible_method_return = va_arg( var_args, VALUE );
+		}
+		
+	va_end( var_args );
+
+	return possible_method_return_match;	
+}
+
+/*******************************************************
+*  RARG_define_PossibleMethodReturnsForObjectWithArgs  *
+*******************************************************/
+	
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsForObjectWithArgs(	VALUE										rb_object,
+																																						char*										method_name, 
+																																						int											argc,
+																																						VALUE*									args,
+																																						VALUE										possible_method_return, ... )	{
+
+	rarg_possible_match_t*			possible_method_return_match		= NULL;	
+	RI_CreatePossibleMatch( possible_method_return_match );
+	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
+
+	possible_method_return_match->possible->methods	=	RI_AllocPossibleMethodMatch();
+	possible_method_return_match->possible->methods->object = rb_object;
+	possible_method_return_match->possible->methods->method = rb_intern( method_name );
+	possible_method_return_match->possible->methods->argc = argc;
+	possible_method_return_match->possible->methods->args = args;
+	rarg_possible_method_response_match_t**	this_possible_method_response_match			=	& possible_method_return_match->possible->methods->possible_return;
+	
+	va_list	var_args;
+	va_start( var_args, possible_method_return );
+
+		while( possible_method_return != Qnil )	{
+			
+			//	make sure we are at the end of the current chain
+			while ( *this_possible_method_response_match != NULL )	{
+				this_possible_method_response_match	=	& ( *this_possible_method_response_match )->next;
+			}
+			*this_possible_method_response_match	=	RI_AllocPossibleMethodReturnMatch();			
+
+			( *this_possible_method_response_match )->value = possible_method_return;
+
+			possible_method_return = va_arg( var_args, VALUE );
+		}
+		
+	va_end( var_args );
+
+	return possible_method_return_match;	
+}
+
+/*****************************************************
+*  RARG_define_PossibleMethodsReturnNonNilForObject  *
+*****************************************************/
+	
+rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilForObject(	VALUE			rb_object,
+																																					char*			method_name, ... )	{
+
+	rarg_possible_match_t*			possible_method_return_match		= NULL;	
+	RI_CreatePossibleMatch( possible_method_return_match );
+	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
+
+	rarg_possible_method_match_t**	this_possible_method_match			=	& possible_method_return_match->possible->methods;
+
+	va_list	var_args;
+	va_start( var_args, method_name );
+
+		while( method_name != NULL )	{
+			
+			//	make sure we are at the end of the current chain
+			while ( *this_possible_method_match != NULL )	{
+				this_possible_method_match	=	& ( *this_possible_method_match )->next;
+			}
+			*this_possible_method_match	=	RI_AllocPossibleMethodMatch();			
+
+			( *this_possible_method_match )->object = rb_object;
+			( *this_possible_method_match )->method = rb_intern( method_name );
+			( *this_possible_method_match )->ensure_return_non_nil = TRUE;
+
+			method_name = va_arg( var_args, char* );
+		}
+		
+	va_end( var_args );
+
+	return possible_method_return_match;	
+}
+
+/*************************************************************
+*  RARG_define_PossibleMethodReturnsNonNilForObjectWithArgs  *
+*************************************************************/
+	
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilForObjectWithArgs(	VALUE			rb_object,
+																																									char*			method_name,
+																																									int				argc,
+																																									VALUE*		args )	{
+
+	rarg_possible_match_t*			possible_method_return_match		= NULL;	
+	RI_CreatePossibleMatch( possible_method_return_match );
+	RI_AssignPossibleMatchType( possible_method_return_match, RARG_METHOD );
+
+	possible_method_return_match->possible->methods	=	RI_AllocPossibleMethodMatch();			
+
+	possible_method_return_match->possible->methods->object = rb_object;
 	possible_method_return_match->possible->methods->method = rb_intern( method_name );
 	possible_method_return_match->possible->methods->argc = argc;
 	possible_method_return_match->possible->methods->args = args;
@@ -739,7 +944,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		m
 
 	rarg_possible_match_t* RARG_define_PossibleBlockMatch_arity( rarg_possible_match_t*	possible_match, int arity, ... )	{
 
-		rarg_possible_block_match_arity_t**	possible_block_arity_match_ptr	=	& possible_match->possible->block->possible_arity;
+		rarg_possible_closure_match_arity_t**	possible_block_arity_match_ptr	=	& possible_match->possible->block->possible_arity;
 
 		va_list	var_args;
 		va_start( var_args, arity );
@@ -749,7 +954,7 @@ rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		m
 					//	move to end of any defined arities
 					while ( *( possible_block_arity_match_ptr = & ( *possible_block_arity_match_ptr )->next ) != NULL );
 				}
-				*possible_block_arity_match_ptr = calloc( 1, sizeof( rarg_possible_block_match_arity_t ) );
+				*possible_block_arity_match_ptr = calloc( 1, sizeof( rarg_possible_closure_match_arity_t ) );
 
 				( *possible_block_arity_match_ptr )->arity	=	arity;
 				arity = va_arg( var_args, int );

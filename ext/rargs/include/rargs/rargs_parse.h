@@ -22,8 +22,9 @@ BOOL RARG_parse_PossibleGroupMatch(	rarg_parse_descriptor_t*			parse_descriptor,
 																		rarg_possible_match_t*				possible_match,
 																		VALUE													rb_arg  );
 BOOL RARG_parse_PossibleBlockMatch(		rarg_parse_descriptor_t*			parse_descriptor,
-																			rarg_possible_match_t*				possible_match );
-BOOL RARG_parse_PossibleBlockArityMatch(	rarg_possible_block_match_arity_t*	possible_arity_match,
+																			rarg_possible_match_t*				possible_match,
+																			VALUE													rb_arg );
+BOOL RARG_parse_PossibleBlockArityMatch(	rarg_possible_closure_match_arity_t*	possible_arity_match,
 																					VALUE																rb_arity	);
 BOOL RARG_parse_PossibleHashMatch(		rarg_parse_descriptor_t*			parse_descriptor, 
 																			rarg_possible_match_t*				possible_match, 

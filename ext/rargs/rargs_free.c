@@ -75,7 +75,7 @@ void RARG_free_PossibleMatches( rarg_possible_match_t* rarg_possible_match )	{
 *  RARG_free_PossibleBlockMatch  *
 *********************************/
 
-void RARG_free_PossibleBlockMatch( rarg_possible_block_match_t* rarg_possible_block_match )	{
+void RARG_free_PossibleBlockMatch( rarg_possible_closure_match_t* rarg_possible_block_match )	{
 	RARG_free_PossibleBlockArityMatches( rarg_possible_block_match->possible_arity );
 	free( rarg_possible_block_match );
 }
@@ -84,9 +84,9 @@ void RARG_free_PossibleBlockMatch( rarg_possible_block_match_t* rarg_possible_bl
 	*  RARG_free_PossibleBlockArityMatches  *
 	****************************************/
 
-	void RARG_free_PossibleBlockArityMatches( rarg_possible_block_match_arity_t* rarg_possible_block_arity_match )	{
+	void RARG_free_PossibleBlockArityMatches( rarg_possible_closure_match_arity_t* rarg_possible_block_arity_match )	{
 
-		rarg_possible_block_match_arity_t* rarg_possible_block_arity_match_ptr;
+		rarg_possible_closure_match_arity_t* rarg_possible_block_arity_match_ptr;
 		while ( rarg_possible_block_arity_match != NULL )	{
 			rarg_possible_block_arity_match_ptr		= rarg_possible_block_arity_match;
 			rarg_possible_block_arity_match				= rarg_possible_block_arity_match->next;

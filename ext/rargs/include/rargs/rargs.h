@@ -201,20 +201,17 @@
 	*  RARG Public Macros  *
 	***********************/
 
-	#define R_DefineAndParse( argc, args, rb_self, parameter_set, ... )			          R_Define( argc, args, rb_self, parameter_set,##__VA_ARGS__ );		\
-																																					          R_Parse();
+	#define R_DefineAndParse( argc, args, rb_self, parameter_set, ... )			          RI_DefineAndParse(	rarg_parameter_sets, rarg_parse_descriptor, argc, args, rb_self, TRUE, parameter_set,##__VA_ARGS__ )
 
+
+	#define R_Declare( descriptor_name, parameter_sets_name )													RI_Declare( descriptor_name, parameter_sets_name );
                                                                                 
 	//	copy init info to pass internally - we leave the originally argc/args alone
 	#define R_Init( passed_argc, passed_args, passed_rb_self )							          RI_Init( rarg_parse_descriptor, passed_argc, passed_args, passed_rb_self );
 
 	//	we define rarg_parameter_sets as static so that the first time the method runs its arg definition structs are defined
 	//	after that we only have to parse, not re-define                               
-	#define R_Define(	passed_argc,				\
-										descriptor_name,		\
-										passed_args,				\
-										passed_rb_self,			\
-										parameter_set, ... )																						RI_Define( rarg_parameter_sets, descriptor_name, argc, args, rb_self, parameter_set,##__VA_ARGS__ );
+	#define R_Define(	parameter_set, ... )																						RI_Define( rarg_parameter_sets, parameter_set,##__VA_ARGS__ );
 
 
 		/*--------------------*
@@ -313,8 +310,8 @@
 	#define R_Ancestor( class_or_module_name, ... )															      RARG_define_PossibleAncestorMatch( class_or_module_name,##__VA_ARGS__, NULL )
 	#define R_AncestorInstance( class_or_module_instance, ... )							          RARG_define_PossibleAncestorInstanceMatch( class_or_module_instance,##__VA_ARGS__, R_TERMINAL )
 
-	#define R_Proc()																												          R_AncestorInstance( rb_cProc )
-	#define R_Lambda()																											          R_Proc()
+	#define R_Proc()																												          RARG_define_ProcMatch()
+	#define R_Lambda()																											          RARG_define_LambdaMatch()
 	#define R_ProcWithArity( arity, ... )																		          RI_Arity( R_Proc(), arity,##__VA_ARGS__, R_TERMINATE_ARITY )
 	#define R_LambdaWithArity( arity, ... )																	          RI_Arity( R_Lambda(), arity,##__VA_ARGS__, R_TERMINATE_ARITY )
 
@@ -333,6 +330,12 @@
 	#define R_ReturnsWithArgs( method, argc, args, rb_return_value, ... )							RARG_define_PossibleMethodReturnsWithArgs( method, argc, args, rb_return_value,##__VA_ARGS__, Qnil )
 	#define R_ReturnsNonNil( method, ... )																						RARG_define_PossibleMethodsReturnNonNil( method,##__VA_ARGS__, NULL )
 	#define R_ReturnsNonNilWithArgs( method, argc, args )															RARG_define_PossibleMethodReturnsNonNilWithArgs( method, argc, args )
+
+	#define R_ObjectRespondsTo( object, method, ... )																								RARG_define_PossibleMethodRespondsForObject( object, method,##__VA_ARGS__, NULL )
+	#define R_ObjectReturns( object, method, rb_return_value, ... )																	RARG_define_PossibleMethodReturnsForObject( object, method, rb_return_value,##__VA_ARGS__, Qnil )
+	#define R_ObjectReturnsWithArgs( object, method, argc, args, rb_return_value, ... )							RARG_define_PossibleMethodReturnsForObjectWithArgs( object, method, argc, args, rb_return_value,##__VA_ARGS__, Qnil )
+	#define R_ObjectReturnsNonNil( object, method, ... )																						RARG_define_PossibleMethodsReturnNonNilForObject( object, method,##__VA_ARGS__, NULL )
+	#define R_ObjectReturnsNonNilWithArgs( object, method, argc, args )															RARG_define_PossibleMethodReturnsNonNilForObjectWithArgs( object, method, argc, args )
 
 	#define R_IfElse( possible_if_else_match, ... )													          RARG_define_PossibleIfElseMatch( possible_if_else_match,##__VA_ARGS__, NULL )
 	#define R_IfValue( rb_variable, possible_match )												          RARG_define_PossibleIfValueMatch( & rb_variable, Qnil, possible_match )
@@ -418,6 +421,12 @@
 	#define R_MatchReturnsWithArgs( receiver, method, argc, args, rb_return_value, ... )		R_MatchPossibleType( receiver, R_ReturnsWithArgs( method, argc, args, rb_return_value,##__VA_ARGS__ ) )
 	#define R_MatchReturnsNonNil( receiver, method, ... )																		R_MatchPossibleType( receiver, R_ReturnsNonNil( method,##__VA_ARGS__ ) )
 	#define R_MatchReturnsNonNilWithArgs( receiver, method, argc, args )										R_MatchPossibleType( receiver, R_ReturnsNonNilWithArgs( method, argc, args ) )
+
+	#define R_MatchObjectRespondsTo( receiver, object, method, ... )																			R_MatchPossibleType( receiver, R_RespondsTo( method,##__VA_ARGS__ ) )
+	#define R_MatchObjectReturns( receiver, object, method, rb_return_value, ... )												R_MatchPossibleType( receiver, R_Returns( method, rb_return_value,##__VA_ARGS__ ) )
+	#define R_MatchObjectReturnsWithArgs( receiver, object, method, argc, args, rb_return_value, ... )		R_MatchPossibleType( receiver, R_ReturnsWithArgs( method, argc, args, rb_return_value,##__VA_ARGS__ ) )
+	#define R_MatchObjectReturnsNonNil( receiver, object, method, ... )																		R_MatchPossibleType( receiver, R_ReturnsNonNil( method,##__VA_ARGS__ ) )
+	#define R_MatchObjectReturnsNonNilWithArgs( receiver, object, method, argc, args )										R_MatchPossibleType( receiver, R_ReturnsNonNilWithArgs( method, argc, args ) )
 	
 		/*---------------*
 		*  RARG Parsing  *
@@ -429,16 +438,16 @@
 
 	#define R_Parse()																												          RI_Parse( rarg_parameter_sets, rarg_parse_descriptor, TRUE );
 
-	#define R_ArgsRemaining()																													( rarg_parse_descriptor.argc - rarg_parse_descriptor.args_parsed )
-	#define R_RemainingArgs()																													( rarg_parse_descriptor.args + rarg_parse_descriptor.args_parsed )
+	#define R_ArgsRemaining()																													( rarg_parse_descriptor->argc - rarg_parse_descriptor->args_parsed )
+	#define R_RemainingArgs()																													( rarg_parse_descriptor->args + rarg_parse_descriptor->args_parsed )
 
 	#define R_Arg( receiver )																													\
-		( ( rarg_parse_descriptor.args_parsed < rarg_parse_descriptor.argc ) ?																																											\
-							( ( receiver = rarg_parse_descriptor.args[ ++rarg_parse_descriptor.args_parsed ] ) != Qnil )																				\
+		( ( rarg_parse_descriptor->args_parsed < rarg_parse_descriptor->argc ) ?																																											\
+							( ( receiver = rarg_parse_descriptor->args[ rarg_parse_descriptor->args_parsed++ ] ) != Qnil )																				\
 							: FALSE )
-	#define R_IterateHashDescriptor( rb_hash, c_function, ... )												RARG_parse_IterateHashDescriptor( & rarg_parse_descriptor, rb_hash, c_function,##__VA_ARGS__, Qnil )
+	#define R_IterateHashDescriptor( rb_hash, c_function, ... )												RARG_parse_IterateHashDescriptor( rarg_parse_descriptor, rb_hash, c_function,##__VA_ARGS__, Qnil )
 	#define R_IterateHash( rb_hash, c_function, ... )																	R_IterateHashDescriptor( rb_hash, c_function,##__VA_ARGS__ )
-	#define R_IterateArrayDescriptor( rb_array, c_function, ... )											RARG_parse_IterateArrayDescriptor( & rarg_parse_descriptor, rb_array, c_function,##__VA_ARGS__, Qnil )
+	#define R_IterateArrayDescriptor( rb_array, c_function, ... )											RARG_parse_IterateArrayDescriptor( rarg_parse_descriptor, rb_array, c_function,##__VA_ARGS__, Qnil )
 	#define R_IterateArray( rb_array, c_function, ... )																R_IterateArrayDescriptor( rb_array, c_function,##__VA_ARGS__ )
 	
 	extern	rarg_possible_type_match_t*	rarg_tmp;

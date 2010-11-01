@@ -61,23 +61,27 @@ char* RARG_error_StringDescriptorForParameterSets( rarg_parameter_set_t*		parame
 char* RARG_error_StringDescriptorForActualPassedArgs( int			argc,
 																											VALUE*	args )	{
 
-	VALUE	rb_arg_descriptions	=	rb_ary_new();
+	VALUE	rb_args	=	rb_ary_new();
 	
 	int	c_which_arg	=	0;
 	for ( c_which_arg = 0 ; c_which_arg < argc ; c_which_arg++ )	{
-		VALUE	rb_string_descriptor_for_arg	=	rb_funcall(	args[ c_which_arg ],
-																											rb_intern( "inspect" ),
-																											0 );
-		rb_ary_push(	rb_arg_descriptions,
-									rb_string_descriptor_for_arg );
+		rb_ary_push(	rb_args,
+									args[ c_which_arg ] );
 	}
 	
-	VALUE	rb_string_descriptor_for_actual_passed_args	=	rb_funcall(	rb_arg_descriptions,
+	VALUE	rb_map_proc	=	rb_eval_string( "lambda { |object| object.each_with_index.map { |member, index| ( \"\t\" + 'Arg ' + index.to_s + ':' + \"\t\" + member.inspect ) } }" );
+	VALUE	rb_mapped_enumerator_for_join	=	rb_funcall( rb_map_proc,
+																										rb_intern( "call" ),
+																										1,
+																										rb_args );
+	
+	VALUE	rb_string_descriptor_for_actual_passed_args	=	rb_funcall(	rb_mapped_enumerator_for_join,
 																																	rb_intern( "join" ),
 																																	1,
-																																	rb_str_new( ", ",
-																																							2 ) );
-
+																																	rb_str_new2( "\n" ) );
+	
+	
+	rb_string_descriptor_for_actual_passed_args	=	rb_str_concat( rb_str_new2( "Actual arguments passed:\n" ), rb_string_descriptor_for_actual_passed_args );
 	
 	char* c_string_descriptor_for_actual_passed_args	=	StringValuePtr( rb_string_descriptor_for_actual_passed_args );
 	

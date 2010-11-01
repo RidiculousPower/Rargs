@@ -65,7 +65,8 @@ VALUE RARG_parse_PossibleBlockMatch_proc_relay( VALUE arg __attribute__ ((unused
 	rarg_possible_match_t*		possible_match		=	RARG_parse_PossibleBlockMatch_possible_match;
 	
 	VALUE	matched	=	RARG_parse_PossibleBlockMatch(	parse_descriptor,
-																									possible_match );
+																									possible_match,
+																									Qnil );
 	
 	return matched;
 }
@@ -74,7 +75,7 @@ VALUE RARG_parse_PossibleBlockMatch_proc_relay( VALUE arg __attribute__ ((unused
 *  RARG_parse_PossibleBlockArityMatch  *
 ***************************************/
 
-DESCRIBE( RARG_parse_PossibleBlockArityMatch, "RARG_parse_PossibleBlockArityMatch( rarg_possible_block_match_arity_t* possible_arity_match, VALUE rb_arity )" )
+DESCRIBE( RARG_parse_PossibleBlockArityMatch, "RARG_parse_PossibleBlockArityMatch( rarg_possible_closure_match_arity_t* possible_arity_match, VALUE rb_arity )" )
 	IT( "tests arity of a passed block" )
 
 		RARG_parse_PossibleBlockMatch_parse_descriptor	=	calloc( 1, sizeof( rarg_parse_descriptor_t ) );

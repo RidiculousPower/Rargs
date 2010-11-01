@@ -234,7 +234,8 @@ BOOL RARG_parse_PossibleMatch(		rarg_parse_descriptor_t*			parse_descriptor,
 			
 		case RARG_BLOCK:
 			matched	=	RARG_parse_PossibleBlockMatch(	parse_descriptor,
-																								possible_match );
+																								possible_match,
+																								rb_arg );
 			break;
 		
 		case RARG_HASH:
@@ -322,15 +323,37 @@ BOOL RARG_parse_PossibleGroupMatch(	rarg_parse_descriptor_t*			parse_descriptor,
 **********************************/
 
 BOOL RARG_parse_PossibleBlockMatch(		rarg_parse_descriptor_t*			parse_descriptor,
-																			rarg_possible_match_t*				possible_match )	{
+																			rarg_possible_match_t*				possible_match,
+																			VALUE													rb_arg )	{
 
-	rarg_possible_block_match_t*	possible_block_match	=	possible_match->possible->block;
+	rarg_possible_closure_match_t*	possible_block_match	=	possible_match->possible->block;
 
 	BOOL	matched	=	FALSE;
 	
-	if ( rb_block_given_p() )	{
+	VALUE	rb_block_as_lambda	=	Qnil;
+	
+	if ( possible_block_match->arg_not_block )	{
+		
+		VALUE	rb_arg_class				=	rb_obj_class( rb_arg );
+		VALUE	rb_arg_ancestors		=	rb_mod_ancestors( rb_arg_class );
+		
+		if ( rb_ary_includes( rb_arg_ancestors, rb_cProc ) == Qtrue )	{
+			rb_block_as_lambda	=	rb_arg;
+			matched = TRUE;
+		}
+		
+	}
+	else if ( rb_block_given_p() )	{
 
-		VALUE	rb_block_as_lambda	=	rb_block_lambda();
+		rb_block_as_lambda	=	rb_block_lambda();
+
+		( *parse_descriptor->matched_parameter_ptr )->block_match = TRUE;
+
+		matched = TRUE;
+
+	}
+
+	if ( matched )	{
 
 		VALUE	rb_arity	=	rb_funcall(	rb_block_as_lambda,
 																	rb_intern( "arity" ),
@@ -341,11 +364,8 @@ BOOL RARG_parse_PossibleBlockMatch(		rarg_parse_descriptor_t*			parse_descriptor
 																															rb_arity ) ) )
 					&&	possible_match->receiver != NULL )	{
 
-			matched	=	TRUE;
-
-			( *parse_descriptor->matched_parameter_ptr )->block_match = TRUE;
-
-			if ( possible_block_match->lambda_instead_of_proc )	{
+			if (		possible_block_match->arg_not_block
+					||	possible_block_match->lambda_instead_of_proc )	{
 		
 				( *parse_descriptor->matched_parameter_ptr )->match			=	rb_block_as_lambda;
 				( *parse_descriptor->matched_parameter_ptr )->receiver	=	possible_match->receiver;
@@ -356,11 +376,8 @@ BOOL RARG_parse_PossibleBlockMatch(		rarg_parse_descriptor_t*			parse_descriptor
 				( *parse_descriptor->matched_parameter_ptr )->match			=	rb_block_as_proc;
 				( *parse_descriptor->matched_parameter_ptr )->receiver	=	possible_match->receiver;
 			}
-		}
 
-	}
-	else {
-		matched = FALSE;
+		}
 	}
 
 	return matched;
@@ -370,7 +387,7 @@ BOOL RARG_parse_PossibleBlockMatch(		rarg_parse_descriptor_t*			parse_descriptor
 *  RARG_parse_PossibleBlockArityMatch  *
 ***************************************/
 
-BOOL RARG_parse_PossibleBlockArityMatch(	rarg_possible_block_match_arity_t*	possible_arity_match,
+BOOL RARG_parse_PossibleBlockArityMatch(	rarg_possible_closure_match_arity_t*	possible_arity_match,
 																					VALUE																rb_arity	)	{
 
 	BOOL	matched	=	FALSE;
@@ -777,7 +794,8 @@ BOOL RARG_parse_PossibleMethodMatches(		rarg_parse_descriptor_t*			parse_descrip
 			if (		( *c_this_possible_method )->ensure_return_non_nil
 					||	( *c_this_possible_method )->possible_return )	{
 				
-				rb_return_value	=	rb_funcall2(	rb_arg,
+				rb_return_value	=	rb_funcall2(	(			( ( *c_this_possible_method )->object == Qnil )
+																					||	( ( *c_this_possible_method )->object == Qfalse )	? rb_arg : ( *c_this_possible_method )->object ),
 																				( *c_this_possible_method )->method,
 																				( *c_this_possible_method )->argc,
 																				( *c_this_possible_method )->args );

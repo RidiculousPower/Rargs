@@ -19,6 +19,8 @@
 	rarg_possible_match_t* RARG_define_PossibleHashMatch_indexesMatch(	char*	c_index, ... );
 	rarg_possible_match_t* RARG_define_PossibleHashMatch_indexesMatch_dataMatch(	rarg_possible_match_t*		possible_hash_index_match, 
 																																								rarg_possible_match_t*		possible_data_match, ... );
+	rarg_possible_match_t* RARG_define_ProcMatch();
+	rarg_possible_match_t* RARG_define_LambdaMatch();
 	rarg_possible_match_t* RARG_define_Block_procMatch();
 	rarg_possible_match_t* RARG_define_Block_lambdaMatch();
 
@@ -45,7 +47,22 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 	rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilWithArgs(	char*		method_name,
 																																					int			argc,
 																																					VALUE*	args );
-
+rarg_possible_match_t* RARG_define_PossibleMethodRespondsForObject(	VALUE					rb_object,
+																																		char*					method_name, ... );
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsForObject(	VALUE										rb_object,
+																																		char*										method_name, 
+																																		VALUE										possible_method_return, ... );
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsForObjectWithArgs(	VALUE										rb_object,
+																																						char*										method_name, 
+																																						int											argc,
+																																						VALUE*									args,
+																																						VALUE										possible_method_return, ... );
+rarg_possible_match_t* RARG_define_PossibleMethodsReturnNonNilForObject(	VALUE			rb_object,
+																																					char*			method_name, ... );
+rarg_possible_match_t* RARG_define_PossibleMethodReturnsNonNilForObjectWithArgs(	VALUE			rb_object,
+																																									char*			method_name,
+																																									int				argc,
+																																									VALUE*		args );
 
 
 		rarg_parameter_set_t* RARG_define_ParameterSet_requireExactMatch(	rarg_parameter_set_t*		parameter_set, ... );	
@@ -89,7 +106,8 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 	#define RI_AllocPossibleMatch()																							calloc( 1, sizeof( rarg_possible_match_t ) )
 	#define RI_AllocPossibleGroupMatch()																				calloc( 1, sizeof( rarg_possible_group_match_t ) )
 	#define RI_AllocPossibleMatchDetails()																			calloc( 1, sizeof( rarg_possible_match_frame_t ) )
-	#define RI_AllocPossibleBlockMatch()																				calloc( 1, sizeof( rarg_possible_block_match_t ) )
+	#define RI_AllocPossibleBlockMatch()																				calloc( 1, sizeof( rarg_possible_closure_match_t ) )
+	#define RI_AllocPossibleProcMatch()																					calloc( 1, sizeof( rarg_possible_closure_match_t ) )
 	#define RI_AllocPossibleHashMatch()																					calloc( 1, sizeof( rarg_possible_hash_match_t ) )
 	#define RI_AllocPossibleTypeMatch()																					calloc( 1, sizeof( rarg_possible_type_match_t ) )
 	#define RI_AllocPossibleAncestorMatch()																			calloc( 1, sizeof( rarg_possible_ancestor_matches_t ) )
@@ -105,6 +123,7 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 	#define RI_AllocAndAssignPossibleMatch( var )																( var )	= RI_AllocPossibleMatch()
 	#define RI_AllocAndAssignPossibleMatchDetails( var )												( var )->possible							= RI_AllocPossibleMatchDetails()
 	#define RI_AllocAndAssignPossibleBlockMatch( var )													( var )->possible->block			= RI_AllocPossibleBlockMatch()
+	#define RI_AllocAndAssignPossibleProcMatch( var )														( var )->possible->block			= RI_AllocPossibleProcMatch()
 	#define RI_AllocAndAssignPossibleHashMatch( var )														( var )->possible->hash				= RI_AllocPossibleHashMatch()
 	#define RI_AllocAndAssignPossibleAncestorsMatch( var )											( var )->possible->ancestors	= RI_AllocPossibleAncestorMatch()
 	#define RI_AllocAndAssignPossibleMethodsMatch( var )												( var )->possible->methods		= RI_AllocPossibleMethodMatch()
@@ -125,6 +144,8 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 
 	#define RI_CreatePossibleBlockMatchForPossibleMatch( possible_match )					RI_AssignPossibleMatchType( possible_match, RARG_BLOCK );						\
 																																								RI_AllocAndAssignPossibleBlockMatch( possible_match );
+	#define RI_CreatePossibleProcMatchForPossibleMatch( possible_match )					RI_AssignPossibleMatchType( possible_match, RARG_BLOCK );						\
+																																								RI_AllocAndAssignPossibleProcMatch( possible_match );
 	#define RI_CreatePossibleHashMatchForPossibleMatch( possible_match )					RI_AssignPossibleMatchType( possible_match, RARG_HASH );						\
 																																								RI_AllocAndAssignPossibleHashMatch( possible_match );
 	#define RI_CreatePossibleTypeMatchForPossibleMatch( possible_match )					RI_AssignPossibleMatchType( possible_match, RARG_TYPE );						\
@@ -136,6 +157,8 @@ rarg_possible_match_t* RARG_define_PossibleIfElseMatch( rarg_possible_if_else_ma
 
 	#define RI_CreatePossibleMatchWithBlock( possible_match_ptr_var )							RI_CreatePossibleMatch( possible_match_ptr_var );										\
 																																								RI_CreatePossibleBlockMatchForPossibleMatch( possible_match_ptr_var );
+	#define RI_CreatePossibleMatchWithProc( possible_match_ptr_var )							RI_CreatePossibleMatch( possible_match_ptr_var );										\
+																																								RI_CreatePossibleProcMatchForPossibleMatch( possible_match_ptr_var );
 	#define RI_CreatePossibleMatchWithHash( possible_match_ptr_var )							RI_CreatePossibleMatch( possible_match_ptr_var );										\
 																																								RI_CreatePossibleHashMatchForPossibleMatch( possible_match_ptr_var );
 	#define RI_CreatePossibleMatchWithType( possible_match_ptr_var )							RI_CreatePossibleMatch( possible_match_ptr_var );										\

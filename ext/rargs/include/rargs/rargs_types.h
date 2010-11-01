@@ -100,8 +100,8 @@
 	|  Block  |
 	.--------*/
 	
-	typedef struct	rarg_possible_block_match_s									rarg_possible_block_match_t;
-	typedef struct	rarg_possible_block_match_arity_s						rarg_possible_block_match_arity_t;
+	typedef struct	rarg_possible_closure_match_s									rarg_possible_closure_match_t;
+	typedef struct	rarg_possible_closure_match_arity_s						rarg_possible_closure_match_arity_t;
 
 	/*-------.
 	|  Hash  |
@@ -240,7 +240,7 @@
 	
 		rarg_possible_group_match_t*							group;
 
-		rarg_possible_block_match_t*							block;
+		rarg_possible_closure_match_t*							block;
 		rarg_possible_hash_match_t*								hash;		
 		rarg_possible_ancestor_matches_t*					ancestors;
 		rarg_possible_method_match_t*							methods;
@@ -260,10 +260,11 @@
 		
 	};
 
-	struct rarg_possible_block_match_s	{
+	struct rarg_possible_closure_match_s	{
 	
 		BOOL																				lambda_instead_of_proc;
-		rarg_possible_block_match_arity_t*					possible_arity;
+		BOOL																				arg_not_block;
+		rarg_possible_closure_match_arity_t*					possible_arity;
 		
 	};
 	
@@ -317,10 +318,10 @@
 		
 	};
 
-	struct rarg_possible_block_match_arity_s	{
+	struct rarg_possible_closure_match_arity_s	{
 	
 		int																					arity;
-		rarg_possible_block_match_arity_t*					next;
+		rarg_possible_closure_match_arity_t*					next;
 
 	};
 
@@ -378,9 +379,10 @@
 
 	struct rarg_possible_method_match_s	{
 	
+		VALUE																					object;
 		ID																						method;
 		//	not yet implemented
-		rarg_possible_block_match_arity_t*						arity;
+		rarg_possible_closure_match_arity_t*						arity;
 		//	not yet implemented
 		int																						argc;
 		//	not yet implemented

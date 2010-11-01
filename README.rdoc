@@ -15,6 +15,55 @@ http://rubygems.org/gems/rargs
 
 == EXAMPLE:
 
+R_DefineAndParse( argc, args, rb_primary_database_self,
+
+  R_DescribeParameterSet(
+                                              //  :index
+    R_ParameterSet(   R_Parameter(            R_MatchSymbol(                                            rb_index ) ),
+                                              //  [ <secondary_database> ]
+                      R_OptionalParameter(    R_MatchAncestorInstance(                                  rb_secondary_database,
+                                                                                                        rb_RPDB_Database ) ),
+                                              //  & block  
+                      R_Parameter(            R_MatchBlockLambdaWithArity(                              rb_callback_proc, 0, 1, 2, 3, -1, -2 ),
+                                              //  proc
+                                              R_MatchLambdaWithArity(                                   rb_callback_proc, 0, 1, 2, 3, -1, -2 ),
+                                              //  <method>
+                                              R_MatchMethod(                                            rb_callback_method ),
+                                              //  :method_in_...
+                                              R_IfElse(     R_IfValue(   rb_secondary_database,
+                                                                         //  :method_in_secondary
+                                                                         R_MatchStringSymbol(           rb_callback_method_name_in_secondary ) ),
+                                                                         //  :method_in_primary
+                                                            R_Else(      R_MatchStringSymbol(           rb_callback_method_name_in_primary ) ) ),
+                                              //  { <callback_object> => :method_in_object }
+                                              R_Hash(       R_HashKey(   R_MatchAny(                    rb_callback_object ) ),
+                                                            R_HashData(  R_MatchStringSymbol(           rb_callback_method ) ) ),
+                                              //  <callback_object>, :method_in_object
+                                              R_Group(      R_MatchAny(                                 rb_callback_object ),  
+                                                            R_MatchStringSymbol(                        rb_callback_method ) ),
+                                              //  <secondary database configured with callback>
+                                              //  this is at the end rather than with the secondary_database argument so that it is only tested if we reach the end
+                                              R_IfElse(      R_IfValue(  rb_secondary_database,
+                                                                         R_ObjectReturnsNonNil(  rb_secondary_database, "secondary_key_creation_callback_method" ) ) ) ) ),
+    R_ListOrder( 1 ),
+    ":index, & block",
+    ":index, <callback_proc>",
+    ":index, <callback_method>",
+    ":index, :callback_method_in_secondary",
+    ":index, <callback_object>, :callback_method_in_object",
+    ":index, <callback_object>, 'callback_method_in_object'",
+    ":index, <callback_object> => 'callback_method_in_object'",
+    ":index, <callback_object> => :callback_method_in_object",
+    ":index, <secondary database>, & block",
+    ":index, <secondary database>, <callback_proc>",
+    ":index, <secondary database>, <callback_method>",
+    ":index, <secondary database>, :callback_method_in_secondary",
+    ":index, <secondary database>, <callback_object>, :callback_method_in_object",
+    ":index, <secondary database>, <callback_object>, 'callback_method_in_object'",
+    ":index, <secondary database>, <callback_object> => 'callback_method_in_object'",
+    ":index, <secondary database>, <callback_object> => :callback_method_in_object"
+  )
+);
 
 == LICENSE:
 
