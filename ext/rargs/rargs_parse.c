@@ -117,9 +117,10 @@ BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor,
 		//	for each arg, test the current parameter
 		// if parsing allowed types fails, break from parsing these parameters and go to next parameter_set
 
+		BOOL	matched	=	FALSE;
 		//	if we have a block match descriptor from our loop or if we didn't loop and have a block descriptor
-		if (		! RARG_parse_PossibleMatches(	parse_descriptor,
-																					parameter )
+		if (		! ( matched = RARG_parse_PossibleMatches(	parse_descriptor,
+																											parameter ) )
 				&&	! parameter->optional ) {
 				
 			parse_descriptor->args_parsed = FALSE;
@@ -127,10 +128,9 @@ BOOL RARG_parse_Parameters(	rarg_parse_descriptor_t*				parse_descriptor,
 		}
 		
 		parameter	= parameter->next;
-		//	if we got here we matched but we don't necessarily have a match struct for each param - only ones with receivers
-		//	don't advance count if we matched block - doesn't correspond to args
-		if (		! *parse_descriptor->matched_parameter_ptr
-				||	! ( *parse_descriptor->matched_parameter_ptr )->block_match )	{
+		//	don't advance count if we matched block or if we had a non-matched optional parameter - doesn't correspond to args
+		if (		matched
+				&&	! ( *parse_descriptor->matched_parameter_ptr )->block_match )	{
 			parse_descriptor->args_parsed++;		
 		}
 	}
