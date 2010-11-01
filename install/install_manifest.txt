@@ -1,9 +1,0 @@
-/usr/local/lib/librargs.dylib
-/usr/local/include/rargs/rargs.h
-/usr/local/include/rargs/rargs_define.h
-/usr/local/include/rargs/rargs_describe.h
-/usr/local/include/rargs/rargs_error.h
-/usr/local/include/rargs/rargs_free.h
-/usr/local/include/rargs/rargs_parse.h
-/usr/local/include/rargs/rargs_types.h
-/usr/local/include/rargs.h
