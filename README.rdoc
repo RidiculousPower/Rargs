@@ -7,105 +7,93 @@ git@github.com:Asher-/Rargs.git
 
 
 == SUMMARY:
-	
+  
 
 == INSTALL:
 
-	* git clone git@github.com:Asher-/Rargs.git
-	* mkdir Rargs/install
-	* cd Rargs/install
-	* cmake ../ext
-	* make
-	* sudo make install
+  * git clone git@github.com:Asher-/Rargs.git
+  * mkdir Rargs/install
+  * cd Rargs/install
+  * cmake ../ext
+  * make
+  * sudo make install
 
 == EXAMPLE:
 
-	VALUE	rb_index								=	Qnil;
-	VALUE	rb_secondary_database		=	Qnil;
+  VALUE  rb_index                =  Qnil;
+  VALUE  rb_secondary_database    =  Qnil;
 
-	VALUE	rb_callback_proc				=	Qnil;
-	VALUE	rb_callback_object			=	Qnil;
-	VALUE	rb_callback_method			=	Qnil;
+  VALUE  rb_callback_proc        =  Qnil;
+  VALUE  rb_callback_object      =  Qnil;
+  VALUE  rb_callback_method      =  Qnil;
 
-	VALUE	rb_callback_method_name_in_secondary	=	Qnil;
-	VALUE	rb_callback_method_name_in_primary		=	Qnil;
+  VALUE  rb_callback_method_name_in_secondary  =  Qnil;
+  VALUE  rb_callback_method_name_in_primary    =  Qnil;
 
-	//	we always have :index
-	//	sometimes we have <secondary database>
+  //  we always have :index
+  //  sometimes we have <secondary database>
 
-	R_DefineAndParse( argc, args, rb_primary_database_self,
+  R_DefineAndParse( argc, args, rb_primary_database_self,
 
-	  R_DescribeParameterSet(
-	                                              //  :index
-	    R_ParameterSet(   R_Parameter(            R_MatchSymbol(                                            rb_index ) ),
-	                                              //  [ <secondary_database> ]
-	                      R_OptionalParameter(    R_MatchAncestorInstance(                                  rb_secondary_database,
-	                                                                                                        rb_RPDB_Database ) ),
-	                                              //  & block  
-	                      R_Parameter(            R_MatchBlockLambdaWithArity(                              rb_callback_proc, 0, 1, 2, 3, -1, -2 ),
-	                                              //  proc
-	                                              R_MatchLambdaWithArity(                                   rb_callback_proc, 0, 1, 2, 3, -1, -2 ),
-	                                              //  <method>
-	                                              R_MatchMethod(                                            rb_callback_method ),
-	                                              //  :method_in_...
-	                                              R_IfElse(     R_IfValue(   rb_secondary_database,
-	                                                                         //  :method_in_secondary
-	                                                                         R_MatchStringSymbol(           rb_callback_method_name_in_secondary ) ),
-	                                                                         //  :method_in_primary
-	                                                            R_Else(      R_MatchStringSymbol(           rb_callback_method_name_in_primary ) ) ),
-	                                              //  { <callback_object> => :method_in_object }
-	                                              R_Hash(       R_HashKey(   R_MatchAny(                    rb_callback_object ) ),
-	                                                            R_HashData(  R_MatchStringSymbol(           rb_callback_method ) ) ),
-	                                              //  <callback_object>, :method_in_object
-	                                              R_Group(      R_MatchAny(                                 rb_callback_object ),  
-	                                                            R_MatchStringSymbol(                        rb_callback_method ) ),
-	                                              //  <secondary database configured with callback>
-	                                              //  this is at the end rather than with the secondary_database argument so that it is only tested if we reach the end
-	                                              R_IfElse(      R_IfValue(  rb_secondary_database,
-	                                                                         R_ObjectReturnsNonNil(  rb_secondary_database, "secondary_key_creation_callback_method" ) ) ) ) ),
-	    R_ListOrder( 1 ),
-	    ":index, & block",
-	    ":index, <callback_proc>",
-	    ":index, <callback_method>",
-	    ":index, :callback_method_in_secondary",
-	    ":index, <callback_object>, :callback_method_in_object",
-	    ":index, <callback_object>, 'callback_method_in_object'",
-	    ":index, <callback_object> => 'callback_method_in_object'",
-	    ":index, <callback_object> => :callback_method_in_object",
-	    ":index, <secondary database>, & block",
-	    ":index, <secondary database>, <callback_proc>",
-	    ":index, <secondary database>, <callback_method>",
-	    ":index, <secondary database>, :callback_method_in_secondary",
-	    ":index, <secondary database>, <callback_object>, :callback_method_in_object",
-	    ":index, <secondary database>, <callback_object>, 'callback_method_in_object'",
-	    ":index, <secondary database>, <callback_object> => 'callback_method_in_object'",
-	    ":index, <secondary database>, <callback_object> => :callback_method_in_object"
-	  )
-	);
+    R_DescribeParameterSet(
+      R_ParameterSet(   R_Parameter(            R_MatchSymbol(                                            rb_index ) ),
+                        R_OptionalParameter(    R_MatchAncestorInstance(                                  rb_secondary_database,
+                                                                                                          rb_RPDB_Database ) ),
+                        R_Parameter(            R_MatchBlockLambdaWithArity(                              rb_callback_proc, 0, 1, 2, 3, -1, -2 ),
+                                                R_MatchLambdaWithArity(                                   rb_callback_proc, 0, 1, 2, 3, -1, -2 ),
+                                                R_MatchMethod(                                            rb_callback_method ),
+                                                R_IfElse(     R_IfValue(   rb_secondary_database,
+                                                                           R_MatchStringSymbol(           rb_callback_method_name_in_secondary ) ),
+                                                              R_Else(      R_MatchStringSymbol(           rb_callback_method_name_in_primary ) ) ),
+                                                R_Hash(       R_HashKey(   R_MatchAny(                    rb_callback_object ) ),
+                                                              R_HashData(  R_MatchStringSymbol(           rb_callback_method ) ) ),
+                                                R_Group(      R_MatchAny(                                 rb_callback_object ),  
+                                                              R_MatchStringSymbol(                        rb_callback_method ) ),
+                                                R_IfElse(      R_IfValue(  rb_secondary_database,
+                                                                           R_ObjectReturnsNonNil(  rb_secondary_database, "secondary_key_creation_callback_method" ) ) ) ) ),
+      R_ListOrder( 1 ),
+      ":index, & block",
+      ":index, <callback_proc>",
+      ":index, <callback_method>",
+      ":index, :callback_method_in_secondary",
+      ":index, <callback_object>, :callback_method_in_object",
+      ":index, <callback_object>, 'callback_method_in_object'",
+      ":index, <callback_object> => 'callback_method_in_object'",
+      ":index, <callback_object> => :callback_method_in_object",
+      ":index, <secondary database>, & block",
+      ":index, <secondary database>, <callback_proc>",
+      ":index, <secondary database>, <callback_method>",
+      ":index, <secondary database>, :callback_method_in_secondary",
+      ":index, <secondary database>, <callback_object>, :callback_method_in_object",
+      ":index, <secondary database>, <callback_object>, 'callback_method_in_object'",
+      ":index, <secondary database>, <callback_object> => 'callback_method_in_object'",
+      ":index, <secondary database>, <callback_object> => :callback_method_in_object"
+    )
+  );
 
-	//	Now use variables specified for matches (test for Qnil or get value from match)
+  //  Now use variables specified for matches (test for Qnil or get value from match)
 
 == LICENSE:
 
-	(The MIT License)
+  (The MIT License)
 
-	Copyright (c) 2010 Asher
+  Copyright (c) 2010 Asher
 
-	Permission is hereby granted, free of charge, to any person obtaining
-	a copy of this software and associated documentation files (the
-	'Software'), to deal in the Software without restriction, including
-	without limitation the rights to use, copy, modify, merge, publish,
-	distribute, sublicense, and/or sell copies of the Software, and to
-	permit persons to whom the Software is furnished to do so, subject to
-	the following conditions:
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  'Software'), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
 
-	The above copyright notice and this permission notice shall be
-	included in all copies or substantial portions of the Software.
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
 
-	THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-	IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-	CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-	TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
