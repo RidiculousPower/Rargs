@@ -1,10 +1,10 @@
 #ifndef RB_RARGS_FREE
-	#define RB_RARGS_FREE
+  #define RB_RARGS_FREE
 
-	#include <ruby.h>
-	#include "rargs_types.h"
+  #include <ruby.h>
+  #include "rargs_types.h"
 
-void RARG_free_ParameterSets( rarg_parameter_set_t* rarg_parameter_set );	
+void RARG_free_ParameterSets( rarg_parameter_set_t* rarg_parameter_set );  
 void RARG_free_Parameters( rarg_parameter_t* rarg_parameter );
 void RARG_free_PossibleMatches( rarg_possible_match_t* rarg_possible_match );
 void RARG_free_PossibleBlockMatch( rarg_possible_closure_match_t* rarg_possible_block_match );
@@ -16,5 +16,5 @@ void RARG_free_PossibleTypeMatch( rarg_possible_type_match_t* rarg_possible_type
 void RARG_free_PossibleAncestorMatches( rarg_possible_ancestor_matches_t* rarg_possible_instance_ancestor_match );
 void RARG_free_PossibleMethodMatches( rarg_possible_method_match_t* rarg_possible_instance_method_match );
 void RARG_free_MatchedParameterSet( rarg_matched_parameter_set_t* rarg_matched_parameter_set );
-	
+  
 #endif

@@ -1,9 +1,9 @@
 # -*- cmake -*-
-#	from:
-#	http://code.google.com/p/emeraldviewer/source/browse/indra/cmake/FindBerkeleyDB.cmake?spec=svn2d5b87bf61c915011530469add736301acccfd32&r=2d5b87bf61c915011530469add736301acccfd32
+#  from:
+#  http://code.google.com/p/emeraldviewer/source/browse/indra/cmake/FindBerkeleyDB.cmake?spec=svn2d5b87bf61c915011530469add736301acccfd32&r=2d5b87bf61c915011530469add736301acccfd32
 #
 # modified:
-#	* changed paths to suit BerkeleyDB.5.0 installation
+#  * changed paths to suit BerkeleyDB.5.0 installation
 # * reversed order for searching /usr/local and /usr
 
 # - Find BerkeleyDB
@@ -15,21 +15,21 @@
 # also defined, but not for general use are
 #  DB_LIBRARY, where to find the BerkeleyDB library.
 
-#	Look for header in paths:
-FIND_PATH( CSPEC_INCLUDE_DIR	cspec.h
-															/usr/local/include
-															/usr/include
+#  Look for header in paths:
+FIND_PATH( CSPEC_INCLUDE_DIR  cspec.h
+                              /usr/local/include
+                              /usr/include
 )
 
 
-#	Look for lib in paths:
+#  Look for lib in paths:
 SET( CSPEC_NAMES ${CSPEC_NAMES} cspec )
 FIND_LIBRARY(CSPEC_LIBRARY
   NAMES ${CSPEC_NAMES}
   PATHS /usr/local/lib /usr/lib
 )
 
-#	set whether we found both headers and lib
+#  set whether we found both headers and lib
 IF (CSPEC_LIBRARY AND CSPEC_INCLUDE_DIR)
     SET(CSPEC_LIBRARIES ${CSPEC_LIBRARY})
     SET(CSPEC_FOUND "YES")

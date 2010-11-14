@@ -4,7 +4,7 @@
 #                                                                             #
 ###############################################################################
 
-  gem_name                  	= 'rargs'
+  gem_name                    = 'rargs'
   has_c_source                = true
 
   developer_name              = 'Asher'
@@ -24,11 +24,11 @@ Hoe.spec gem_name do
   developer( developer_name, email )
   self.rubyforge_name   = rubyforge_name
   self.version          = File.open( 'VERSION.rdoc' ).readline
-  self.readme_file			= 'README.rdoc'
+  self.readme_file      = 'README.rdoc'
   self.history_file     = 'CHANGELOG.rdoc'
-  self.extra_rdoc_files	= FileList['*.rdoc']
+  self.extra_rdoc_files  = FileList['*.rdoc']
   if has_c_source
-    self.spec_extras		= { :extensions => 'ext/' + gem_name + '/extconf.rb' }
+    self.spec_extras    = { :extensions => 'ext/' + gem_name + '/extconf.rb' }
     self.extra_dev_deps << ['rake-compiler', '>= 0']  
   end
   Rake::ExtensionTask.new( gem_name, spec ) do |ext|

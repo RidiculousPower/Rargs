@@ -1,6 +1,6 @@
 
 set( _RUBY_DEBUG_OUTPUT ON)
-#	make sure we have libdb
+#  make sure we have libdb
 find_package( Ruby REQUIRED )
 
 message( STATUS "Using Ruby Lib: ${RUBY_LIBRARY}" )
@@ -11,7 +11,7 @@ get_directory_property( cmake_current_include_dir INCLUDE_DIRECTORIES )
 LINK_DIRECTORIES( "/usr/local/lib" )
 include_directories( ${RUBY_INCLUDE_DIRS} ${CSPEC_INCLUDE_DIR} )
 
-#	define shared library with sources
+#  define shared library with sources
 file( GLOB RARGS_SOURCE "*.c" )
 file( GLOB RARGS_HEADERS "include/rargs/*.h" )
 
@@ -35,14 +35,14 @@ set( CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib" )
 set( CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE )
 
 # Set the build version (VERSION) and the API version (SOVERSION)
-set_target_properties( rargs	PROPERTIES	LINKER_LANGUAGE C 
-																					OUTPUT_NAME "../librargs"
-																					PREFIX ""
-																					SUFFIX ".dylib"
-																					LINK_FLAGS "-Wl,-rpath,-L${CMAKE_INSTALL_RPATH}"
-																					INSTALL_RPATH ${CMAKE_INSTALL_RPATH}
-																					INSTALL_NAME_DIR ${CMAKE_INSTALL_NAME_DIR}
-																					C_FLAGS "-ggdb -fsigned-char -Wall -W -Wshadow -Wstrict-prototypes -Wpointer-arith -Wcast-qual -Winline -Werror" )
+set_target_properties( rargs  PROPERTIES  LINKER_LANGUAGE C 
+                                          OUTPUT_NAME "../librargs"
+                                          PREFIX ""
+                                          SUFFIX ".dylib"
+                                          LINK_FLAGS "-Wl,-rpath,-L${CMAKE_INSTALL_RPATH}"
+                                          INSTALL_RPATH ${CMAKE_INSTALL_RPATH}
+                                          INSTALL_NAME_DIR ${CMAKE_INSTALL_NAME_DIR}
+                                          C_FLAGS "-ggdb -fsigned-char -Wall -W -Wshadow -Wstrict-prototypes -Wpointer-arith -Wcast-qual -Winline -Werror" )
 
 # Installation of the library
 install( TARGETS rargs DESTINATION lib PERMISSIONS OWNER_READ GROUP_READ WORLD_READ )
