@@ -1022,6 +1022,11 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
   rb_passed_info.rb_passed_args        =  rb_args_to_pass;
   rb_passed_info.rb_return_receiver    = rb_hash_new();
 
+	//	we already parsed 1 arg for our hash and are moving to the next
+	//	if we advance we skip one, so advance backward to prevent skipping
+	//	we are still parsing arg one, so skip backward and RI_NextArg will fix
+	parse_descriptor->args_parsed--;
+
   do {
 
     rb_hash_foreach(  rb_hash,  
@@ -1029,9 +1034,7 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
                       (VALUE) & rb_passed_info );
 
     /* remaining args are hashes */
-  } while (			//	we already parsed 1 arg for our hash and are moving to the next; if we advance we skip one, so advance backward to prevent skipping
-								parse_descriptor->args_parsed-- >= 0
-						&&	RI_NextArg( parse_descriptor, rb_hash ) 
+  } while (			RI_NextArg( parse_descriptor, rb_hash ) 
 						&&  TYPE( rb_hash ) == T_HASH );
 
   //  if we got a non-hash, move args back
@@ -1078,6 +1081,11 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
                                 rb_array );
   }
 
+	//	we already parsed 1 arg for our array and are moving to the next
+	//	if we advance we skip one, so advance backward to prevent skipping
+	//	we are still parsing arg one, so skip backward and RI_NextArg will fix
+	parse_descriptor->args_parsed--;
+	
   do {
 
     VALUE  rb_this_return  =  c_function( RARRAY_LEN( rb_array ),
@@ -1088,9 +1096,7 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
                   rb_this_return );
     
     /* remaining args are arrays */
-  } while (   //	we already parsed 1 arg for our array and are moving to the next; if we advance we skip one, so advance backward to prevent skipping
-							parse_descriptor->args_parsed-- >= 0
-					&&	RI_NextArg( parse_descriptor, rb_array )
+  } while (   RI_NextArg( parse_descriptor, rb_array )
           &&  TYPE( rb_array ) == T_ARRAY );
 
   //  if we got a non-hash, move args back
