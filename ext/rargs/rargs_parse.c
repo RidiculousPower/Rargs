@@ -310,7 +310,9 @@ BOOL RARG_parse_PossibleGroupMatch(  rarg_parse_descriptor_t*      parse_descrip
     }
     
     //  advance rb_arg
-    (void) RI_NextArg(  parse_descriptor, rb_arg );
+    if ( ! RI_NextArg(  parse_descriptor, rb_arg ) )	{
+			break;
+		}
   
     possible_group_match = possible_group_match->next;
   }
@@ -1076,9 +1078,9 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
 
   do {
 
-    VALUE  rb_this_return  =  c_function(  RARRAY_LEN( rb_array ),
-                                        RARRAY_PTR( rb_array ),
-                                        parse_descriptor->rb_self );
+    VALUE  rb_this_return  =  c_function( RARRAY_LEN( rb_array ),
+																					RARRAY_PTR( rb_array ),
+																					parse_descriptor->rb_self );
 
     rb_ary_push(  rb_return, 
                   rb_this_return );

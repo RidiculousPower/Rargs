@@ -39,26 +39,26 @@ char* RARG_error_StringDescriptorForParameterSets(  rarg_parse_descriptor_t*  pa
 
   VALUE  rb_arg_formats_array      =  RARG_collectDescriptionsForParameterSets( parameter_sets );
   VALUE  rb_arg_formats_string      =  rb_funcall(  rb_arg_formats_array,
-                                                rb_intern( "join" ),
-                                                1,
-                                                rb_str_new( "\n * ",
+																										rb_intern( "join" ),
+																										1,
+																										rb_str_new( "\n * ",
                                                             4 ) );
   char*  c_arg_formats_string  =  StringValuePtr( rb_arg_formats_string );
-  char*  c_format_string        =  "Failed to match any acceptable parameter formats in %s.%s.\n\nAcceptable formats:\n * %s\n\n";
+  char*  c_format_string       =  "Failed to match any acceptable parameter formats in %s.%s.\n\nAcceptable formats:\n * %s\n\n";
   
   //  append formats to error string
-  VALUE  rb_current_method_name  =  rb_funcall(  rb_mKernel,
-                                              rb_intern( "__method__" ),
-                                              0 );
+  VALUE  rb_current_method_name  =  rb_funcall(		rb_mKernel,
+																									rb_intern( "__method__" ),
+																									0 );
   VALUE  rb_receiver              =  rb_funcall(  parse_descriptor->rb_self,
-                                              rb_intern( "inspect" ),
-                                              0 );
-  char*  c_receiver      =  StringValuePtr( rb_receiver );
+																									rb_intern( "inspect" ),
+																									0 );
+  char*  c_receiver				=  StringValuePtr( rb_receiver );
   char*  c_method_name    =  (char*) rb_id2name( SYM2ID( rb_current_method_name ) );
-  int    c_error_string_length  =  strlen( c_arg_formats_string ) 
-                              + strlen( c_format_string ) 
-                              + strlen( c_method_name ) 
-                              + strlen( c_receiver );
+  int    c_error_string_length  =  strlen(	c_arg_formats_string ) 
+																					+ strlen( c_format_string ) 
+																					+ strlen( c_method_name ) 
+																					+ strlen( c_receiver );
   char*  c_string_descriptor_for_parameter_sets        =  calloc( c_error_string_length + 1, sizeof( char ) );    
   sprintf(  c_string_descriptor_for_parameter_sets, 
             c_format_string, 
