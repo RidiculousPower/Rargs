@@ -128,11 +128,6 @@ BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor,
     }
     
     parameter  = parameter->next;
-    //  don't advance count if we matched block or if we had a non-matched optional parameter - doesn't correspond to args
-    if (    matched
-        &&  ! ( *parse_descriptor->matched_parameter_ptr )->block_match )  {
-      parse_descriptor->args_parsed++;    
-    }
   }
 
   //  if we got here we matched
@@ -279,6 +274,12 @@ BOOL RARG_parse_PossibleMatch(    rarg_parse_descriptor_t*      parse_descriptor
       break;
   
   }
+
+	//  don't advance count if we matched block or if we had a non-matched optional parameter - doesn't correspond to args
+	if (    matched
+			&&  ! ( *parse_descriptor->matched_parameter_ptr )->block_match )  {
+		parse_descriptor->args_parsed++;    
+	}
   
   return matched;
 }
@@ -1025,7 +1026,7 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
 	//	we already parsed 1 arg for our hash and are moving to the next
 	//	if we advance we skip one, so advance backward to prevent skipping
 	//	we are still parsing arg one, so skip backward and RI_NextArg will fix
-	parse_descriptor->args_parsed--;
+//	parse_descriptor->args_parsed--;
 
   do {
 
@@ -1084,7 +1085,7 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
 	//	we already parsed 1 arg for our array and are moving to the next
 	//	if we advance we skip one, so advance backward to prevent skipping
 	//	we are still parsing arg one, so skip backward and RI_NextArg will fix
-	parse_descriptor->args_parsed--;
+//	parse_descriptor->args_parsed--;
 	
   do {
 

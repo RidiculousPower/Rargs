@@ -75,7 +75,7 @@ static int RARG_parse_IterateHashFunctionForKeyValue(  VALUE  rb_key,
 
   #define RI_NextArg( parse_descriptor, receiver )                                                                \
     ( ( parse_descriptor->args_parsed < parse_descriptor->argc ) ?                                                                                      \
-                ( ( receiver = parse_descriptor->args[ ++parse_descriptor->args_parsed ] ) != Qnil )                                        \
+                ( ( receiver = parse_descriptor->args[ parse_descriptor->args_parsed++ ] ) != Qnil )                                        \
                 : FALSE )
 
 #endif
