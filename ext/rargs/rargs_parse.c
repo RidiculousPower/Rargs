@@ -60,6 +60,8 @@ BOOL RARG_parse_ParameterSetsForMatch(  rarg_parse_descriptor_t*  parse_descript
 rarg_matched_parameter_set_t* RARG_parse_ParameterSets(  rarg_parse_descriptor_t*    parse_descriptor, 
                                                         rarg_parameter_set_t*        parameter_set )  {  
 
+	parse_descriptor->args_parsed  =  0;
+
   while ( parameter_set != NULL )  {
 
     parse_descriptor->matched_parameter_set  =  calloc( 1, sizeof( rarg_matched_parameter_set_t ) );
@@ -93,9 +95,7 @@ rarg_matched_parameter_set_t* RARG_parse_ParameterSets(  rarg_parse_descriptor_t
 
 BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor, 
                             rarg_parameter_t*                parameter )  {
-  
-  parse_descriptor->args_parsed  =  0;
-      
+        
   if (    ! parse_descriptor->argc
       &&  parameter->possible_match->type == RARG_BLOCK
       &&  rb_block_given_p() )  {
@@ -559,6 +559,9 @@ BOOL RARG_parse_PossibleHashMatch(    rarg_parse_descriptor_t*      parse_descri
             ( *parse_descriptor->matched_parameter_ptr )->match  =  rb_hash_arg;
           }
           
+					//	we matched a sub-key, so we need to counter-act the parsed_args iteration
+					parse_descriptor->args_parsed--;
+					
           //  and we matched so we're done with this key or data
           break;
         }
@@ -1018,10 +1021,10 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
   va_end( var_args );
 
   rarg_hash_iterator_passed_args_type_t  rb_passed_info;
-  rb_passed_info.c_function            =  c_function;
-  rb_passed_info.rb_self              =  parse_descriptor->rb_self;
-  rb_passed_info.rb_passed_args        =  rb_args_to_pass;
-  rb_passed_info.rb_return_receiver    = rb_hash_new();
+  rb_passed_info.c_function							=  c_function;
+  rb_passed_info.rb_self								=  parse_descriptor->rb_self;
+  rb_passed_info.rb_passed_args					=  rb_args_to_pass;
+  rb_passed_info.rb_return_receiver			= rb_hash_new();
 
 	//	we already parsed 1 arg for our hash and are moving to the next
 	//	if we advance we skip one, so advance backward to prevent skipping
@@ -1112,9 +1115,9 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
 *  RARG_parse_IterateArrayDescriptor  *
 **************************************/
 
-static int RARG_parse_IterateHashFunctionForKeyValue(  VALUE  rb_key,
-                                                      VALUE  rb_data,
-                                                      VALUE  rb_passed_args )  {
+static int RARG_parse_IterateHashFunctionForKeyValue(		VALUE  rb_key,
+																												VALUE  rb_data,
+																												VALUE  rb_passed_args )  {
   
   //  rb_passed_args is not actually a VALUE
   //  it is actually a pointer to a struct, which holds our actual value
@@ -1127,16 +1130,19 @@ static int RARG_parse_IterateHashFunctionForKeyValue(  VALUE  rb_key,
   rb_ary_push(  rb_additional_args,
                 rb_data );
   
-  rb_passed_info->rb_passed_args  =  rb_ary_concat(  rb_passed_info->rb_passed_args,
-                                                    rb_additional_args );
+	
+	VALUE	rb_prepend_args	=	rb_ary_dup( rb_passed_info->rb_passed_args );
+	
+	VALUE	rb_args	=	rb_ary_concat(	rb_prepend_args,
+																	rb_additional_args );
       
-  VALUE    rb_return_value    =  rb_passed_info->c_function(  RARRAY_LEN( rb_passed_info->rb_passed_args ),
-                                                          RARRAY_PTR( rb_passed_info->rb_passed_args ),
-                                                          rb_passed_info->rb_self );
+  VALUE    rb_return_value    =  rb_passed_info->c_function(  RARRAY_LEN( rb_args ),
+																															RARRAY_PTR( rb_args ),
+																															rb_passed_info->rb_self );
 
-  rb_hash_aset(  rb_passed_info->rb_return_receiver,
-                rb_key,
-                rb_return_value );
+  rb_hash_aset(		rb_passed_info->rb_return_receiver,
+									rb_key,
+									rb_return_value );
   
   return ST_CONTINUE;
 }
