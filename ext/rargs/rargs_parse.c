@@ -1137,37 +1137,6 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
 *  RARG_parse_IterateArrayDescriptor  *
 **************************************/
 
-VALUE RARG_parse_SplatArrayDescriptor(  rarg_parse_descriptor_t*          parse_descriptor,
-                                          VALUE                              rb_array,
-																					VALUE																rb_self,
-                                          VALUE                              c_function(    int      argc,
-                                                                                          VALUE*  args,
-                                                                                          VALUE    rb_self ),
-                                          VALUE                              rb_arg_to_pass, ... )  {
-
-	VALUE	rb_return	=	rb_ary_new();
-	
-	do	{
-		
-		VALUE	rb_args_array				=	rb_ary_concat(	rb_ary_dup( parse_descriptor->rb_passed_args ),
-																								rb_array );
-		
-		VALUE	rb_this_return	=	rb_RPDB_Database_retrieve(	RARRAY_LEN( rb_args_array ),
-																												RARRAY_PTR( rb_args_array ),
-																												rb_self );
-		rb_ary_push(	rb_return,
-									rb_this_return );
-									
-	} while (   RI_NextArg( parse_descriptor, rb_array )
-					&&  TYPE( rb_array ) == T_ARRAY );
-	
-	return SIMPLIFIED_RUBY_ARRAY( rb_return );
-}
-
-/**********************************************
-*  RARG_parse_IterateHashFunctionForKeyValue  *
-**********************************************/
-
 static int RARG_parse_IterateHashFunctionForKeyValue(		VALUE  rb_key,
 																												VALUE  rb_data,
 																												VALUE  rb_passed_args )  {
