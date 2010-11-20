@@ -1,6 +1,8 @@
 #ifndef RB_RARGS
   #define RB_RARGS
 
+	#include "rargs_macros.h"
+	
   #include "rargs_types.h"
   #include "rargs_define.h"
   #include "rargs_parse.h"
@@ -440,21 +442,7 @@
 
   #define R_ArgsRemaining()                                                          ( rarg_parse_descriptor->argc - rarg_parse_descriptor->args_parsed )
   #define R_RemainingArgs()                                                          ( rarg_parse_descriptor->args + rarg_parse_descriptor->args_parsed )
-
-  #define R_Arg( receiver )                                                          \
-    ( ( rarg_parse_descriptor->args_parsed < rarg_parse_descriptor->argc ) ?                                                                                      \
-              ( ( receiver = rarg_parse_descriptor->args[ rarg_parse_descriptor->args_parsed++ ] ) != Qnil )                                        \
-              : FALSE )
-  #define R_IterateHashDescriptor( rb_hash, c_function, ... )                        R_IterateHashDescriptorWithSelf( rb_hash, c_function, Qnil,##__VA_ARGS__ )
-  #define R_IterateHashDescriptorWithSelf( rb_hash, c_function, rb_other_self, ... ) RARG_parse_IterateHashDescriptor( rarg_parse_descriptor, rb_hash, rb_other_self, c_function,##__VA_ARGS__, Qnil )
-  #define R_IterateHash( rb_hash, c_function, ... )                                  R_IterateHashDescriptor( rb_hash, c_function,##__VA_ARGS__ )
-  #define R_IterateArrayDescriptor( rb_array, c_function, ... )                      R_IterateArrayDescriptorWithSelf( rb_array, c_function, Qnil,##__VA_ARGS__ )
-  #define R_IterateArrayDescriptorWithSelf( rb_array, c_function, rb_other_self, ... )  RARG_parse_IterateArrayDescriptor( rarg_parse_descriptor, rb_array, rb_other_self, c_function,##__VA_ARGS__, Qnil )
-  #define R_IterateArray( rb_array, c_function, ... )																			R_IterateArrayDescriptor( rb_array, c_function,##__VA_ARGS__ )
-  #define R_SplatArrayDescriptor( rb_array, c_function, ... )															R_IterateArrayDescriptorWithSelf( rb_array, c_function, Qnil,##__VA_ARGS__ )
-  #define R_SplatArrayDescriptorWithSelf( rb_array, c_function, rb_other_self, ... )			RARG_parse_SplatArrayDescriptor( rarg_parse_descriptor, rb_array, rb_other_self, c_function,##__VA_ARGS__, Qnil )
   
-  extern  rarg_possible_type_match_t*  rarg_tmp;
   void Init_rargs();
 
 #endif

@@ -6,6 +6,8 @@
   #include "rargs_types.h"
   #include "rargs_define.h"
 
+	#include "rargs_macros.h"
+
 BOOL RARG_parse_ParameterSetsForMatch(  rarg_parse_descriptor_t*  parse_descriptor,
                                         rarg_parameter_set_t*      parameter_sets,
                                         BOOL                      raise_exception_on_match_fail );  
@@ -82,9 +84,5 @@ static int RARG_parse_IterateHashFunctionForKeyValue(  VALUE  rb_key,
                                                       VALUE  rb_data,
                                                       VALUE  rb_passed_args );
 
-  #define RI_NextArg( parse_descriptor, receiver )                                                                \
-    ( ( parse_descriptor->args_parsed < parse_descriptor->argc ) ?                                                                                      \
-                ( ( receiver = parse_descriptor->args[ parse_descriptor->args_parsed++ ] ) != Qnil )                                        \
-                : FALSE )
 
 #endif

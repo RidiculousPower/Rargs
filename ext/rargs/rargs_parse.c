@@ -1134,7 +1134,7 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
 }
 
 /**************************************
-*  RARG_parse_IterateArrayDescriptor  *
+*  RARG_parse_SplatArrayDescriptor  *
 **************************************/
 
 VALUE RARG_parse_SplatArrayDescriptor(  rarg_parse_descriptor_t*          parse_descriptor,
@@ -1145,23 +1145,39 @@ VALUE RARG_parse_SplatArrayDescriptor(  rarg_parse_descriptor_t*          parse_
                                                                                           VALUE    rb_self ),
                                           VALUE                              rb_arg_to_pass, ... )  {
 
-	VALUE	rb_return	=	rb_ary_new();
+	VALUE		rb_return	=	rb_ary_new();
+
+  //  collect passed args into ruby array
+  VALUE   rb_args_to_pass  =  rb_ary_new();
+
+  va_list  var_args;
+  va_start( var_args, rb_arg_to_pass );
+  
+    while ( rb_arg_to_pass != Qnil )  {
+      
+      rb_ary_push(  rb_args_to_pass,
+                    rb_arg_to_pass );
+      
+      rb_arg_to_pass = va_arg( var_args, VALUE );
+    }
+  
+  va_end( var_args );
 	
 	do	{
 		
-		VALUE	rb_args_array				=	rb_ary_concat(	rb_ary_dup( parse_descriptor->rb_passed_args ),
+		VALUE	rb_args_array				=	rb_ary_concat(	rb_arg_to_pass,
 																								rb_array );
 		
-		VALUE	rb_this_return	=	rb_RPDB_Database_retrieve(	RARRAY_LEN( rb_args_array ),
-																												RARRAY_PTR( rb_args_array ),
-																												rb_self );
+		VALUE	rb_this_return	=	c_function(	RARRAY_LEN( rb_args_array ),
+																				RARRAY_PTR( rb_args_array ),
+																				rb_self );
 		rb_ary_push(	rb_return,
 									rb_this_return );
 									
 	} while (   RI_NextArg( parse_descriptor, rb_array )
 					&&  TYPE( rb_array ) == T_ARRAY );
 	
-	return SIMPLIFIED_RUBY_ARRAY( rb_return );
+	return R_SimplifyArray( rb_return );
 }
 
 /**********************************************
