@@ -999,10 +999,17 @@ BOOL RARG_parse_PossibleIfElseMatch(  rarg_parse_descriptor_t*      parse_descri
 
 VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_descriptor,
                                         VALUE                          rb_hash,
+																				VALUE													rb_self,
                                         VALUE                          c_function(    int      argc,
                                                                                     VALUE*  args,
                                                                                     VALUE    rb_self ),
                                         VALUE                          rb_arg_to_pass, ... )  {
+
+	VALUE	rb_self_from_parse_descriptor_storage	=	Qnil;
+	if ( rb_self != Qnil )	{
+		rb_self_from_parse_descriptor_storage	=	parse_descriptor->rb_self;
+		parse_descriptor->rb_self	=	rb_self;
+	}	
 
   //  collect passed args into ruby array
   VALUE    rb_args_to_pass  =  rb_ary_new();
@@ -1046,6 +1053,10 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
     parse_descriptor->args_parsed--;
   }
   
+	if ( rb_self_from_parse_descriptor_storage != Qnil )	{
+		parse_descriptor->rb_self	=	rb_self_from_parse_descriptor_storage;
+	}
+	
   return rb_passed_info.rb_return_receiver;
 }
 
@@ -1055,10 +1066,17 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
 
 VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          parse_descriptor,
                                           VALUE                              rb_array,
+																					VALUE																rb_self,
                                           VALUE                              c_function(    int      argc,
                                                                                           VALUE*  args,
                                                                                           VALUE    rb_self ),
                                           VALUE                              rb_arg_to_pass, ... )  {
+
+	VALUE	rb_self_from_parse_descriptor_storage	=	Qnil;
+	if ( rb_self != Qnil )	{
+		rb_self_from_parse_descriptor_storage	=	parse_descriptor->rb_self;
+		parse_descriptor->rb_self	=	rb_self;
+	}
 
   VALUE  rb_return  =  rb_ary_new();
 
@@ -1107,6 +1125,10 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
   if ( TYPE( rb_array ) != T_ARRAY )  {
     parse_descriptor->args_parsed--;
   }
+	
+	if ( rb_self_from_parse_descriptor_storage != Qnil )	{
+		parse_descriptor->rb_self	=	rb_self_from_parse_descriptor_storage;
+	}
   
   return rb_return;
 }

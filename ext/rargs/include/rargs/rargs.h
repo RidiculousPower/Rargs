@@ -445,10 +445,12 @@
     ( ( rarg_parse_descriptor->args_parsed < rarg_parse_descriptor->argc ) ?                                                                                      \
               ( ( receiver = rarg_parse_descriptor->args[ rarg_parse_descriptor->args_parsed++ ] ) != Qnil )                                        \
               : FALSE )
-  #define R_IterateHashDescriptor( rb_hash, c_function, ... )                        RARG_parse_IterateHashDescriptor( rarg_parse_descriptor, rb_hash, c_function,##__VA_ARGS__, Qnil )
+  #define R_IterateHashDescriptor( rb_hash, c_function, ... )                        R_IterateHashDescriptorWithSelf( rb_hash, c_function, Qnil,##__VA_ARGS__ )
+  #define R_IterateHashDescriptorWithSelf( rb_hash, c_function, rb_other_self, ... ) RARG_parse_IterateHashDescriptor( rarg_parse_descriptor, rb_hash, rb_other_self, c_function,##__VA_ARGS__, Qnil )
   #define R_IterateHash( rb_hash, c_function, ... )                                  R_IterateHashDescriptor( rb_hash, c_function,##__VA_ARGS__ )
-  #define R_IterateArrayDescriptor( rb_array, c_function, ... )                      RARG_parse_IterateArrayDescriptor( rarg_parse_descriptor, rb_array, c_function,##__VA_ARGS__, Qnil )
-  #define R_IterateArray( rb_array, c_function, ... )                                R_IterateArrayDescriptor( rb_array, c_function,##__VA_ARGS__ )
+  #define R_IterateArrayDescriptor( rb_array, c_function, ... )                      R_IterateArrayDescriptorWithSelf( rbarray, c_function, Qnil,##__VA_ARGS__ )
+  #define R_IterateArrayDescriptorWithSelf( rb_array, c_function, rb_other_self, ... )  RARG_parse_IterateArrayDescriptor( rarg_parse_descriptor, rb_array, rb_other_self, c_function,##__VA_ARGS__, Qnil )
+  #define R_IterateArray( rb_array, c_function, ... )																			R_IterateArrayDescriptor( rb_array, c_function,##__VA_ARGS__ )
   
   extern  rarg_possible_type_match_t*  rarg_tmp;
   void Init_rargs();

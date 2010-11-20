@@ -59,12 +59,14 @@ BOOL RARG_parse_PossibleIfElseMatch(  rarg_parse_descriptor_t*      parse_descri
 
 VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_descriptor,
                                         VALUE                          rb_hash,
+																				VALUE													rb_self,
                                         VALUE                          c_function(    int      argc,
                                                                                     VALUE*  args,
                                                                                     VALUE    rb_self ),
                                         VALUE                          rb_arg_to_pass, ... );
 VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          parse_descriptor,
                                           VALUE                              rb_array,
+																					VALUE																rb_self,
                                           VALUE                              c_function(    int      argc,
                                                                                           VALUE*  args,
                                                                                           VALUE    rb_self ),
