@@ -1067,7 +1067,7 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
 VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          parse_descriptor,
                                           VALUE                              rb_array,
 																					VALUE																rb_self,
-                                          VALUE                              c_function(    int      argc,
+                                          VALUE                              c_function(  int      argc,
                                                                                           VALUE*  args,
                                                                                           VALUE    rb_self ),
                                           VALUE                              rb_arg_to_pass, ... )  {
