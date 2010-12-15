@@ -169,7 +169,7 @@
   
   */
 
-  #define RI_AllocParseDescriptor()                                                  calloc( 1, sizeof( rarg_parse_descriptor_t ) );
+  #define RI_AllocParseDescriptor()                                                 calloc( 1, sizeof( rarg_parse_descriptor_t ) );
   #define RI_Declare( descriptor_name, parameter_sets_name )                        rarg_parse_descriptor_t*        descriptor_name  =  RI_AllocParseDescriptor();              \
                                                                                     rarg_parameter_set_t*            parameter_sets_name;
 
@@ -276,8 +276,6 @@
 
   #define R_Array()                                                                  R_Type( R_ARRAY )
   #define R_Struct()                                                                R_Type( R_STRUCT )
-  #define R_File()                                                                  R_Type( R_FILE )
-
   #define R_File()                                                                  R_Type( R_FILE )
 
   #define R_Class()                                                                  R_Type( R_CLASS )

@@ -1,4 +1,7 @@
-require_relative 'rargs/rargs'
+
 class Rargs
 
 end
+
+require_relative 'rargs/rargs'
+

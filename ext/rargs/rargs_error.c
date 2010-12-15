@@ -91,9 +91,9 @@ char* RARG_error_StringDescriptorForActualPassedArgs( int      argc,
                                                     rb_args );
   
   VALUE  rb_string_descriptor_for_actual_passed_args  =  rb_funcall(  rb_mapped_enumerator_for_join,
-                                                                  rb_intern( "join" ),
-                                                                  1,
-                                                                  rb_str_new2( "\n" ) );
+																																			rb_intern( "join" ),
+																																			1,
+																																			rb_str_new2( "\n" ) );
   
   
   rb_string_descriptor_for_actual_passed_args  =  rb_str_concat( rb_str_new2( "Actual arguments passed:\n" ), rb_string_descriptor_for_actual_passed_args );

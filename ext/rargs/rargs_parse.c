@@ -100,14 +100,28 @@ BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor,
       &&  parameter->possible_match->type == RARG_BLOCK
       &&  rb_block_given_p() )  {
       
-      if ( RARG_parse_PossibleMatches(  parse_descriptor,
-                                        parameter ) )  {
-        parse_descriptor->args_parsed = TRUE;
-      }
-      else  {
-        parse_descriptor->args_parsed = FALSE;
-      }
+		if ( RARG_parse_PossibleMatches(  parse_descriptor,
+																			parameter ) )  {
+			parse_descriptor->args_parsed = TRUE;
+		}
+		else  {
+			parse_descriptor->args_parsed = FALSE;
+		}
   }
+	else if (		! parse_descriptor->argc
+					&&	parameter->optional )	{
+		// go through all optional parameters
+		while (		( parameter = parameter->next )
+					&&	parameter->optional );
+		//	if a parameter remains then we didn't match - non-optional parameter
+		if ( parameter )	{
+			parse_descriptor->args_parsed = FALSE;
+		}
+		else {
+			parse_descriptor->args_parsed = TRUE;
+		}
+
+	}
   else while(    parameter != NULL )  {
   
     //  advance matched parameter to the end
@@ -119,14 +133,14 @@ BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor,
 
     BOOL  matched  =  FALSE;
     //  if we have a block match descriptor from our loop or if we didn't loop and have a block descriptor
-    if (    ! ( matched = RARG_parse_PossibleMatches(  parse_descriptor,
-                                                      parameter ) )
+    if (    ! ( matched = RARG_parse_PossibleMatches( parse_descriptor,
+																											parameter ) )
         &&  ! parameter->optional ) {
         
       parse_descriptor->args_parsed = FALSE;
       break;
     }
-    
+		    
     parameter  = parameter->next;
   }
 
