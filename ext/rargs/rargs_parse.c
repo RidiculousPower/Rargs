@@ -93,8 +93,8 @@ rarg_matched_parameter_set_t* RARG_parse_ParameterSets(  rarg_parse_descriptor_t
 *  RARG_parse_Parameters  *
 **************************/
 
-BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor, 
-                            rarg_parameter_t*                parameter )  {
+BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor, 
+															rarg_parameter_t*                parameter )  {
         
   if (    ! parse_descriptor->argc
       &&  parameter->possible_match->type == RARG_BLOCK
@@ -132,10 +132,10 @@ BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor,
     // if parsing allowed types fails, break from parsing these parameters and go to next parameter_set
 
     BOOL  matched  =  FALSE;
-    //  if we have a block match descriptor from our loop or if we didn't loop and have a block descriptor
-    if (    ! ( matched = RARG_parse_PossibleMatches( parse_descriptor,
+		//	test for possible match - break if we don't match and parameter was not optional
+    if (    ! ( matched = RARG_parse_PossibleMatches(	parse_descriptor,
 																											parameter ) )
-        &&  ! parameter->optional ) {
+				&&  ! parameter->optional ) {
         
       parse_descriptor->args_parsed = FALSE;
       break;
@@ -162,7 +162,7 @@ BOOL RARG_parse_Parameters(  rarg_parse_descriptor_t*        parse_descriptor,
 BOOL RARG_parse_PossibleMatches(  rarg_parse_descriptor_t*      parse_descriptor,
                                   rarg_parameter_t*              parameter )  {
 
-  VALUE  rb_arg  =  ( parse_descriptor->argc && ( parse_descriptor->args_parsed <= parse_descriptor->argc ) ? parse_descriptor->args[ parse_descriptor->args_parsed ] : Qnil );
+  VALUE  rb_arg  =  ( parse_descriptor->argc && ( parse_descriptor->args_parsed < parse_descriptor->argc ) ? parse_descriptor->args[ parse_descriptor->args_parsed ] : Qnil );
 
   BOOL matched  =  FALSE;
 
@@ -186,15 +186,15 @@ BOOL RARG_parse_PossibleMatches(  rarg_parse_descriptor_t*      parse_descriptor
       //  a nil arg can be a block (doesn't correspond to an arg)
       if (    possible_match->type == RARG_BLOCK
           &&  ( matched  =  RARG_parse_PossibleMatch( parse_descriptor,
-                                                    possible_match,
-                                                    rb_arg ) ) )  {
+																											possible_match,
+																											rb_arg ) ) )  {
         break;
       }
       //  or can be an explicit nil type
       else if (    possible_match->type == RARG_TYPE
               &&  ( matched  =  RARG_parse_PossibleTypeMatch( parse_descriptor,
-                                                            possible_match,
-                                                            rb_arg ) ) )  {
+																															possible_match,
+																															rb_arg ) ) )  {
         break;
       }
 
@@ -373,8 +373,8 @@ BOOL RARG_parse_PossibleBlockMatch(    rarg_parse_descriptor_t*      parse_descr
   if ( matched )  {
 
     VALUE  rb_arity  =  rb_funcall(  rb_block_as_lambda,
-                                  rb_intern( "arity" ),
-                                  0 );
+																			rb_intern( "arity" ),
+																			0 );
 
     if (  (    possible_block_match->possible_arity == NULL
           ||  ( matched = RARG_parse_PossibleBlockArityMatch( possible_block_match->possible_arity,
@@ -1047,11 +1047,6 @@ VALUE RARG_parse_IterateHashDescriptor(  rarg_parse_descriptor_t*      parse_des
   rb_passed_info.rb_passed_args					=  rb_args_to_pass;
   rb_passed_info.rb_return_receiver			= rb_hash_new();
 
-	//	we already parsed 1 arg for our hash and are moving to the next
-	//	if we advance we skip one, so advance backward to prevent skipping
-	//	we are still parsing arg one, so skip backward and RI_NextArg will fix
-//	parse_descriptor->args_parsed--;
-
   do {
 
     rb_hash_foreach(  rb_hash,  
@@ -1116,11 +1111,6 @@ VALUE RARG_parse_IterateArrayDescriptor(  rarg_parse_descriptor_t*          pars
     rb_array  =  rb_ary_concat(  rb_args_to_pass,
                                 rb_array );
   }
-
-	//	we already parsed 1 arg for our array and are moving to the next
-	//	if we advance we skip one, so advance backward to prevent skipping
-	//	we are still parsing arg one, so skip backward and RI_NextArg will fix
-//	parse_descriptor->args_parsed--;
 	
   do {
 
