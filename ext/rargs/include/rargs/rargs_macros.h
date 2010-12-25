@@ -20,7 +20,7 @@
 	              : FALSE )
 	
 	#define R_SimplifyArray( rb_array )																											( RARRAY_LEN( rb_array ) ? ( ( RARRAY_LEN( rb_array ) == 1 ) ? RARRAY_PTR( rb_array )[0] : rb_array ) : Qnil )
-	#define R_SimplifyHash( rb_hash )																											( RHASH_SIZE( rb_hash ) ? ( ( RHASH_SIZE( rb_hash ) == 1 ) ? (VALUE) RHASH( rb_hash )->ntbl->bins[1] : rb_hash ) : Qnil )
+	#define R_SimplifyHash( rb_hash )																												( RHASH_SIZE( rb_hash ) ? ( ( RHASH_SIZE( rb_hash ) == 1 ) ? rb_ary_entry( rb_funcall( rb_hash, rb_intern( "first" ), 0 ), 1 ) : rb_hash ) : Qnil )
 
 	#define R_ReturnEnumeratorIfNoBlock( argc, args, rb_self )															RETURN_ENUMERATOR( rb_self, argc, args )
 	
