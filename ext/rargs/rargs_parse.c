@@ -123,7 +123,23 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
 
 	}
   else while(    parameter != NULL )  {
-  
+  	
+		if ( parse_descriptor->args_parsed == parse_descriptor->argc )	{
+			if ( parameter->optional )	{
+				// go through all optional parameters
+				while (		parameter->optional
+							&&	( parameter = parameter->next ) );
+				//	if a parameter remains then we didn't match - non-optional parameter
+				if ( parameter )	{
+					parse_descriptor->args_parsed = FALSE;
+				}
+			}
+			else {
+				parse_descriptor->args_parsed = FALSE;
+			}
+			break;
+		}
+		
     //  advance matched parameter to the end
     while (      *parse_descriptor->matched_parameter_ptr != NULL 
             &&  *( parse_descriptor->matched_parameter_ptr = & ( *parse_descriptor->matched_parameter_ptr )->next ) != NULL );
@@ -132,7 +148,8 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
     // if parsing allowed types fails, break from parsing these parameters and go to next parameter_set
 
     BOOL  matched  =  FALSE;
-		//	test for possible match - break if we don't match and parameter was not optional
+		//	test for possible match; break if:
+		//	* we don't match and parameter was not optional
     if (    ! ( matched = RARG_parse_PossibleMatches(	parse_descriptor,
 																											parameter ) )
 				&&  ! parameter->optional ) {
@@ -144,10 +161,6 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
     parameter  = parameter->next;
   }
 
-  //  if we got here we matched
-  //  * we have the option of requiring exact match (in which case we test which_parameter == argc)
-  //  * or of allowing repeats, in which case we return the index of the next unused arg
-  //  we test for this after return, in parameter set
   return parse_descriptor->args_parsed;
 }
 
