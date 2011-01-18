@@ -124,7 +124,9 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
 	}
   else while(    parameter != NULL )  {
   	
-		if ( parse_descriptor->args_parsed == parse_descriptor->argc )	{
+		if (		parse_descriptor->args_parsed == parse_descriptor->argc
+				&&	parameter->possible_match->type != RARG_BLOCK )	{
+
 			if ( parameter->optional )	{
 				// go through all optional parameters
 				while (		parameter->optional
@@ -137,6 +139,7 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
 			else {
 				parse_descriptor->args_parsed = FALSE;
 			}
+
 			break;
 		}
 		
