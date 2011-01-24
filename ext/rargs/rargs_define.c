@@ -247,8 +247,8 @@ rarg_possible_match_t* RARG_define_PossibleHashMatch(  rarg_possible_hash_key_da
 
   rarg_possible_hash_key_data_match_t* RARG_define_PossibleHashMatch_KeyOrDataMatch( rarg_possible_match_t* possible_match, ... )  {
 
-    rarg_possible_match_t*  root_possible_match  =  possible_match;
-    rarg_possible_match_t**  this_possible_match  =  & root_possible_match->next;
+    rarg_possible_match_t*		root_possible_match  =  NULL;
+    rarg_possible_match_t**		this_possible_match  =  & root_possible_match;
 
     //  for each possible type, create FIFO chain in root_possible_match
     va_list  var_args;
