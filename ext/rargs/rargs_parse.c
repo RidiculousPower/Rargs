@@ -7,6 +7,10 @@
                                           Parameter Sets
 ***********************************************************************************************************************/
 
+static int RARG_parse_IterateHashFunctionForKeyValue(   VALUE  rb_key,
+                                                        VALUE  rb_data,
+                                                        VALUE  rb_passed_args );
+
 /*************************************
 *  RARG_parse_ParameterSetsForMatch  *
 *************************************/
@@ -66,19 +70,18 @@ rarg_matched_parameter_set_t* RARG_parse_ParameterSets(  rarg_parse_descriptor_t
 
     parse_descriptor->matched_parameter_set  =  calloc( 1, sizeof( rarg_matched_parameter_set_t ) );
     parse_descriptor->matched_parameter_ptr  =  & parse_descriptor->matched_parameter_set->parameters;
+    
+    //  if we parsed parameters and had a result (args_parsed is > 0)
+    //  or if we parsed parameters and had a block (block_parsed is true)
+    //  then we match
+    RARG_parse_Parameters(  parse_descriptor,
+                            parameter_set->parameters );
 
-    // if all parameters in a parameter_set match args
-    if ( ( parse_descriptor->matched_parameter_set->last_arg  =  RARG_parse_Parameters(  parse_descriptor,
-                                                                                        parameter_set->parameters ) )
-
-      //  if we require exact match and have args remaining we don't match
-      &&  (    ! parameter_set->require_exact
-          ||  parse_descriptor->matched_parameter_set->last_arg == parse_descriptor->argc ) )  {
-
-      //  otherwise, success - matched parameter_set
+    if (    parse_descriptor->args_parsed
+        ||  parse_descriptor->block_parsed )  {
       break;
     }
-    
+
     RARG_free_MatchedParameterSet( parse_descriptor->matched_parameter_set );
     parse_descriptor->matched_parameter_set = NULL;
     
@@ -100,9 +103,10 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
       &&  parameter->possible_match->type == RARG_BLOCK
       &&  rb_block_given_p() )  {
       
-		if ( RARG_parse_PossibleMatches(  parse_descriptor,
-																			parameter ) )  {
-			parse_descriptor->args_parsed = TRUE;
+		if (    RARG_parse_PossibleMatches(  parse_descriptor,
+                                          parameter )
+        &&  parse_descriptor->argc )  {
+			parse_descriptor->block_parsed = TRUE;
 		}
 		else  {
 			parse_descriptor->args_parsed = FALSE;
@@ -142,11 +146,7 @@ BOOL RARG_parse_Parameters(		rarg_parse_descriptor_t*        parse_descriptor,
 
 			break;
 		}
-		
-    //  advance matched parameter to the end
-    while (      *parse_descriptor->matched_parameter_ptr != NULL 
-            &&  *( parse_descriptor->matched_parameter_ptr = & ( *parse_descriptor->matched_parameter_ptr )->next ) != NULL );
-  
+		  
     //  for each arg, test the current parameter
     // if parsing allowed types fails, break from parsing these parameters and go to next parameter_set
 
@@ -185,17 +185,21 @@ BOOL RARG_parse_PossibleMatches(  rarg_parse_descriptor_t*      parse_descriptor
   rarg_possible_match_t*  possible_match  =  parameter->possible_match;
 
   if ( *parse_descriptor->matched_parameter_ptr == NULL )  {
+
     *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
   }
   else if ( ( *parse_descriptor->matched_parameter_ptr )->receiver != NULL )  {
+
     ( *parse_descriptor->matched_parameter_ptr )->next    =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
     parse_descriptor->matched_parameter_ptr                =  & ( *parse_descriptor->matched_parameter_ptr )->next;
+
   }
 
   //  if we have more parameters but no more args, check to see if we are looking for a block
   //  if so, parse it
   //  otherwise, break and return FALSE;
-  if (  rb_arg == Qnil ) {
+  if (  parse_descriptor->args_parsed == parse_descriptor->argc ) {
 
     while ( possible_match != NULL )  {
 
@@ -206,7 +210,7 @@ BOOL RARG_parse_PossibleMatches(  rarg_parse_descriptor_t*      parse_descriptor
 																											rb_arg ) ) )  {
         break;
       }
-      //  or can be an explicit nil type
+      //  or can be an explicit nil type (or ANY type)
       else if (    possible_match->type == RARG_TYPE
               &&  ( matched  =  RARG_parse_PossibleTypeMatch( parse_descriptor,
 																															possible_match,
@@ -306,10 +310,18 @@ BOOL RARG_parse_PossibleMatch(    rarg_parse_descriptor_t*      parse_descriptor
   }
 
 	//  don't advance count if we matched block or if we had a non-matched optional parameter - doesn't correspond to args
-	if (    matched
-			&&  ! ( *parse_descriptor->matched_parameter_ptr )->block_match )  {
-		parse_descriptor->args_parsed++;    
-	}
+	if ( matched ) {
+  
+    if ( possible_match->type == RARG_BLOCK )  {
+      parse_descriptor->block_parsed = TRUE;
+      if ( possible_match->possible->block->arg_not_block ) {
+        parse_descriptor->args_parsed++;    
+      }
+    }
+    else  {
+      parse_descriptor->args_parsed++;
+    }
+  }
   
   return matched;
 }
@@ -1011,6 +1023,14 @@ BOOL RARG_parse_PossibleIfElseMatch(  rarg_parse_descriptor_t*      parse_descri
 
       //  if we match this arg, parse next arg
       (void) RI_NextArg(  parse_descriptor, rb_arg );
+      //  we need the next var but we don't want to move args parsed forward
+      parse_descriptor->args_parsed--;
+      
+      if ( ( *parse_descriptor->matched_parameter_ptr )->receiver != NULL )  {
+        parse_descriptor->matched_parameter_ptr    =  & ( *parse_descriptor->matched_parameter_ptr )->next;
+        *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+      }
+
       matched = RARG_parse_PossibleMatch( parse_descriptor,
                                           possible_if_else_match->possible->match->action,
                                           rb_arg );

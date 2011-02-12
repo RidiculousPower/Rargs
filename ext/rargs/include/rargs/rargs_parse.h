@@ -80,9 +80,6 @@ VALUE RARG_parse_SplatArrayDescriptor(  rarg_parse_descriptor_t*          parse_
                                                                                           VALUE*  args,
                                                                                           VALUE    rb_self ),
                                           VALUE                              rb_arg_to_pass, ... );
-static int RARG_parse_IterateHashFunctionForKeyValue(  VALUE  rb_key,
-                                                      VALUE  rb_data,
-                                                      VALUE  rb_passed_args );
 
 
 #endif

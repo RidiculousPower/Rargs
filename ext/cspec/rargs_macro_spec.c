@@ -161,7 +161,7 @@ DESCRIBE( R_Type, "R_Type( type, ... )" )
 
     //  file
 
-    VALUE  rb_file  =  rb_file_open( "../test/main_spec.c", "r" );
+    VALUE  rb_file  =  rb_file_open( "install_manifest.txt", "r" );
     VALUE  args_for_file[]  =  { rb_file };
     RI_DefineAndParse(  rarg_parameter_sets_for_file,      
                         rarg_parse_descriptor_for_file,     
@@ -437,7 +437,7 @@ DESCRIBE( R_MatchType, "R_MatchType( receiver, type )" )
     //  file
 
     VALUE  rb_file_match  =  Qnil;
-    VALUE  rb_file  =  rb_file_open( "../test/main_spec.c", "r" );
+    VALUE  rb_file  =  rb_file_open( "install_manifest.txt", "r" );
     VALUE  args_for_file[]  =  { rb_file };
     RI_DefineAndParse(  rarg_parameter_sets_for_file,      
                         rarg_parse_descriptor_for_file,     
@@ -997,6 +997,7 @@ DESCRIBE( R_MatchProc, "R_MatchProc( receiver )" )
                         R_ParameterSet( R_Parameter( R_MatchProc(  rb_proc_match ) ) ) );
     
     SHOULD_BE_TRUE( rarg_parse_descriptor_for_proc->args_parsed );    
+    SHOULD_BE_TRUE( rarg_parse_descriptor_for_proc->block_parsed );    
     SHOULD_EQUAL( rb_proc_match, rb_proc );
   END_IT
 END_DESCRIBE
@@ -1021,6 +1022,7 @@ DESCRIBE( R_MatchLambda, "R_MatchLambda( receiver )" )
                         R_ParameterSet( R_Parameter( R_MatchLambda(  rb_lambda_match ) ) ) );
     
     SHOULD_BE_TRUE( rarg_parse_descriptor_for_lambda->args_parsed );    
+    SHOULD_BE_TRUE( rarg_parse_descriptor_for_lambda->block_parsed );    
     SHOULD_EQUAL( rb_lambda_match, rb_lambda );
   END_IT
 END_DESCRIBE
@@ -1045,6 +1047,7 @@ DESCRIBE( R_MatchProcWithArity, "R_MatchProcWithArity( receiver, arity, ... )" )
                         R_ParameterSet( R_Parameter( R_MatchProcWithArity(  rb_proc_match, 1 ) ) ) );
     
     SHOULD_BE_TRUE( rarg_parse_descriptor_for_proc->args_parsed );    
+    SHOULD_BE_TRUE( rarg_parse_descriptor_for_proc->block_parsed );    
     SHOULD_EQUAL( rb_proc_match, rb_proc );
   END_IT
 END_DESCRIBE
@@ -1069,6 +1072,7 @@ DESCRIBE( R_MatchLambdaWithArity, "R_MatchLambdaWithArity( receiver, arity, ... 
                         R_ParameterSet( R_Parameter( R_MatchLambdaWithArity(  rb_lambda_match, 1 ) ) ) );
     
     SHOULD_BE_TRUE( rarg_parse_descriptor_for_lambda->args_parsed );    
+    SHOULD_BE_TRUE( rarg_parse_descriptor_for_lambda->block_parsed );    
     SHOULD_EQUAL( rb_lambda_match, rb_lambda );
   END_IT
 END_DESCRIBE
@@ -1110,7 +1114,8 @@ END_DESCRIBE
 VALUE RARG_macro_PossibleBlockMatch_proc_relay( VALUE arg __attribute__ ((unused)) )  {
   
   RI_Parse( RARG_macro_PossibleBlockMatch_parameter_set, RARG_macro_PossibleBlockMatch_parse_descriptor, FALSE );
-  SHOULD_BE_TRUE( RARG_macro_PossibleBlockMatch_parse_descriptor->args_parsed );
+  SHOULD_BE_FALSE( RARG_macro_PossibleBlockMatch_parse_descriptor->args_parsed );
+  SHOULD_BE_TRUE( RARG_macro_PossibleBlockMatch_parse_descriptor->block_parsed );    
   SHOULD_BE_TRUE( rb_block_match_arg != Qnil );
   
   return Qnil;

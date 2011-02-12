@@ -402,7 +402,7 @@ DESCRIBE( RD_MatchIndex, "R_MatchIndex( index_string, receiver )" )
     rarg_possible_match_t* possible_index_match  =  R_MatchIndex( rb_receiver, "index" );
     SHOULD_NOT_BE_NULL( possible_index_match );
     SHOULD_EQUAL( strcmp( possible_index_match->possible->hash->possible_index_match->index_name, "index" ), 0 );
-    SHOULD_EQUAL( possible_index_match->receiver, & rb_receiver );
+    SHOULD_EQUAL( possible_index_match->possible->hash->possible_index_match->receiver, & rb_receiver );
     SHOULD_BE_FALSE( possible_index_match->optional );
     SHOULD_BE_FALSE( possible_index_match->possible->hash->possible_index_match->assign_parent_hash_for_match );
   END_IT
@@ -419,7 +419,7 @@ DESCRIBE( RD_MatchIndexMatch, "R_MatchIndexMatch( index_string, possible_match, 
     rarg_possible_match_t*  possible_index_match  =  R_MatchIndexMatch( rb_receiver, "index", possible_string_match );
     SHOULD_NOT_BE_NULL( possible_index_match );
     SHOULD_EQUAL( strcmp( possible_index_match->possible->hash->possible_index_match->index_name, "index" ), 0 );
-    SHOULD_EQUAL( possible_index_match->receiver, & rb_receiver );
+    SHOULD_EQUAL( possible_index_match->possible->hash->possible_index_match->receiver, & rb_receiver );
     SHOULD_EQUAL( possible_index_match->possible->hash->possible_index_match->possible_index_data_match, possible_string_match );
   END_IT
 END_DESCRIBE

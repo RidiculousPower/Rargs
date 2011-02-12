@@ -172,6 +172,7 @@
     int                                    argc;
     VALUE*                                args;
     int                                    args_parsed;
+    BOOL                                  block_parsed;
 
     VALUE                                  rb_self;
 

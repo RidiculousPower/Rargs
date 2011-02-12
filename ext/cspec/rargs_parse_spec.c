@@ -128,13 +128,28 @@ DESCRIBE( RARG_parse_PossibleTypeMatch, "RARG_parse_PossibleTypeMatch( rarg_pars
     VALUE  rb_string  =  rb_str_new2( "some string" );
     VALUE  args_two[]  =  { rb_string };
     RT_ParseDescriptor( parse_descriptor, 1, args_two );
-    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    parse_descriptor->matched_parameter_ptr   =  & parse_descriptor->matched_parameter_set->parameters;
     *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
     
-    matched  =  RARG_parse_PossibleTypeMatch(  parse_descriptor,
-                                            possible_match,
-                                            rb_string );    
+    matched  =  RARG_parse_PossibleTypeMatch( parse_descriptor,
+                                              possible_match,
+                                              rb_string );    
     SHOULD_BE_FALSE( matched );
+
+    //  should succeed
+    
+    VALUE  rb_nil     = Qnil;
+    VALUE  args_three[] = { rb_nil };
+    RT_ParseDescriptor( parse_descriptor, 1, args_three );
+    parse_descriptor->matched_parameter_ptr   =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
+    rarg_possible_match_t*  possible_match_two  =  R_MatchType( rb_nil, R_ANY );
+    
+    matched  =  RARG_parse_PossibleTypeMatch( parse_descriptor,
+                                              possible_match_two,
+                                              rb_nil );    
+    SHOULD_BE_TRUE( matched );
 
   END_IT
 END_DESCRIBE
@@ -245,6 +260,8 @@ DESCRIBE( RARG_parse_PossibleIndexMatch, "RARG_parse_PossibleIndexMatch( rarg_pa
 
     VALUE  args[]  =  { rb_hash };
     RT_ParseDescriptor( parse_descriptor, 1, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
 
     VALUE  rb_data  =  Qnil;
     rarg_possible_match_t*  possible_match  =  R_MatchIndex( rb_data, "key" );
@@ -262,6 +279,9 @@ DESCRIBE( RARG_parse_PossibleIndexMatch, "RARG_parse_PossibleIndexMatch( rarg_pa
                   rb_str_new2( "data" ) );
     VALUE  args_two[]  =  { rb_hash_two };
     RT_ParseDescriptor( parse_descriptor, 1, args_two );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     matched  =  RARG_parse_PossibleIndexMatch(  parse_descriptor,
                                               possible_match,
                                               rb_hash_two );    
@@ -284,6 +304,8 @@ DESCRIBE( RARG_parse_PossibleHashMatch, "RARG_parse_PossibleHashMatch( rarg_pars
                   rb_str_new2( "data" ) );
     VALUE  args[]  =  { rb_hash };
     RT_ParseDescriptor( parse_descriptor, 1, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
 
     rarg_possible_match_t*  possible_match  =  R_Hash(  R_HashKey(  R_Symbol() ),
                                                       R_HashData(  R_String() ) );
@@ -295,6 +317,8 @@ DESCRIBE( RARG_parse_PossibleHashMatch, "RARG_parse_PossibleHashMatch( rarg_pars
     VALUE  rb_array  =  rb_ary_new();
     VALUE  args_two[]  =  { rb_array };
     RT_ParseDescriptor( parse_descriptor, 1, args_two );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
 
     matched  =  RARG_parse_PossibleHashMatch(  parse_descriptor,
                                             possible_match,
@@ -324,6 +348,9 @@ DESCRIBE( RARG_parse_PossibleGroupMatch, "RARG_parse_PossibleGroupMatch( rarg_pa
     //  Test 1 - match
 
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     rarg_possible_match_t*  possible_group_match  =  R_Group(  R_MatchString( rb_string ),
                                                               R_MatchSymbol( rb_symbol ) );
     BOOL  matched  =  RARG_parse_PossibleGroupMatch( parse_descriptor, possible_group_match, rb_arg_one );
@@ -337,6 +364,9 @@ DESCRIBE( RARG_parse_PossibleGroupMatch, "RARG_parse_PossibleGroupMatch( rarg_pa
 
     //  make arg two not match
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     VALUE  args_two[]  =  { rb_cObject, rb_ary_new() };
     matched  =  RARG_parse_PossibleGroupMatch( parse_descriptor, possible_group_match, *args_two );
     SHOULD_BE_FALSE( matched );
@@ -357,6 +387,8 @@ DESCRIBE( RARG_parse_PossibleIfElseMatchMatch, "RARG_parse_PossibleIfElseMatchMa
     VALUE  rb_array  =  rb_ary_new();
     VALUE  args[]  =  { rb_string, rb_array };
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
 
     VALUE  rb_string_match  =  Qnil;
     VALUE  rb_array_match  =  Qnil;
@@ -394,6 +426,9 @@ DESCRIBE( RARG_parse_PossibleIfElseMatchMatch, "RARG_parse_PossibleIfElseMatchMa
     //  false second condition match
     
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     possible_match  =  R_IfElse(  R_IfMatch(  R_MatchString( rb_string_match ),
                                             R_MatchSymbol( rb_array_match ) ));
 
@@ -408,6 +443,9 @@ DESCRIBE( RARG_parse_PossibleIfElseMatchMatch, "RARG_parse_PossibleIfElseMatchMa
     //  if fail / else match
 
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     possible_match  =  R_IfElse(  R_IfMatch(  R_MatchArray( rb_array_match ),
                                             R_MatchSymbol( rb_symbol_match ) ),
                                 R_Else(      R_MatchString( rb_string_match ) ) );
@@ -424,6 +462,9 @@ DESCRIBE( RARG_parse_PossibleIfElseMatchMatch, "RARG_parse_PossibleIfElseMatchMa
     //  if fail / else fail
 
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     VALUE  rb_block  =  Qnil;
     possible_match  =  R_IfElse(  R_IfMatch(  R_MatchArray( rb_array_match ),
                                             R_MatchSymbol( rb_symbol_match ) ),
@@ -452,6 +493,8 @@ DESCRIBE( RARG_parse_PossibleIfElseValueMatch, "RARG_parse_PossibleIfElseValueMa
     VALUE  rb_array  =  rb_ary_new();
     VALUE  args[]  =  { rb_string, rb_array };
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
 
     //  match if variable is non-nil
     
@@ -471,6 +514,9 @@ DESCRIBE( RARG_parse_PossibleIfElseValueMatch, "RARG_parse_PossibleIfElseValueMa
     //  match if variable is Qtrue
     
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     rb_value  =  Qtrue;
     possible_match  =  R_IfElse(  R_IfValueEquals(  rb_value, Qtrue,
                                                   R_MatchString( rb_string_match ) ) );
@@ -486,6 +532,9 @@ DESCRIBE( RARG_parse_PossibleIfElseValueMatch, "RARG_parse_PossibleIfElseValueMa
     //  Fail - value non-nil
         
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     rb_value  =  Qnil;
     possible_match  =  R_IfElse(  R_IfValue(  rb_value,
                                             R_MatchString( rb_string_match ) ) );
@@ -500,6 +549,9 @@ DESCRIBE( RARG_parse_PossibleIfElseValueMatch, "RARG_parse_PossibleIfElseValueMa
     //  Fail - value not equal
         
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     rb_value  =  Qfalse;
     possible_match  =  R_IfElse(  R_IfValueEquals(  rb_value, Qtrue,
                                                   R_MatchString( rb_string_match ) ) );
@@ -514,6 +566,9 @@ DESCRIBE( RARG_parse_PossibleIfElseValueMatch, "RARG_parse_PossibleIfElseValueMa
     //  Fail - match doesn't match
         
     RT_ParseDescriptor( parse_descriptor, 2, args );
+    parse_descriptor->matched_parameter_ptr    =  & parse_descriptor->matched_parameter_set->parameters;
+    *parse_descriptor->matched_parameter_ptr  =  calloc( 1, sizeof( rarg_matched_parameter_t ) );
+
     rb_value  =  Qtrue;
     VALUE  rb_array_match  =  Qnil;
     possible_match  =  R_IfElse(  R_IfValue(  rb_value,
